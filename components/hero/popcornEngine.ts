@@ -1,18 +1,19 @@
 /**
- * Popcorn stage engine (v2) — a small 2D-canvas particle system for the hero.
+ * Popcorn stage engine — a small 2D-canvas particle system for the hero.
  *
- * HARD RULE: the logo is never drawn, scaled, rotated, masked or overlaid by this engine's
- * layers at rest. The logo is a separate, untouched <Image>. This engine draws popcorn shapes
- * (pre-rendered sprites of drawn circles — never pieces of the logo) on two canvases:
+ * HARD RULE: the logo is never drawn, scaled, rotated, masked or redrawn here. The logo is a
+ * separate, untouched <Image>. This engine draws popcorn shapes (see sprites.ts — drawn
+ * gradients, never pieces of the logo) on two canvases:
  *
  *   back  canvas — BEHIND the logo: the entrance burst (kernels emerge from behind the logo)
- *                  and up to 8 slow, faint ambient kernels. Anything behind the logo is hidden
- *                  by it, so the logo is never covered.
- *   front canvas — IN FRONT: tap/click bursts only. They fly out from the tap point, fall and
- *                  fade within ~2s; the logo itself never moves.
+ *                  and up to 8 slow, faint ambient kernels in the margins.
+ *   front canvas — IN FRONT: tap/click bursts from the tap point; they fall and fade in ~2s.
  *
- * No WebGL, no libraries. Each frame is a handful of drawImage calls.
+ * Each burst kernel shows as a seed for a beat, then pops with an overshoot and a few butter
+ * flecks. No WebGL, no libraries.
  */
+
+import { drawSeed, FLAVORS, makePuffSprite, popScale } from "./sprites";
 
 type Layer = "back" | "front";
 
@@ -25,10 +26,14 @@ type Kernel = {
   rot: number;
   vr: number;
   size: number;
-  age: number; // seconds; negative = waiting to pop (staggered)
+  age: number; // seconds; negative = waiting
+  seed: number; // seconds spent as an unpopped seed before popping
   life: number;
   sprite: number;
+  popped: boolean;
 };
+
+type Fleck = { layer: Layer; x: number; y: number; vx: number; vy: number; age: number; life: number; size: number };
 
 type Drifter = {
   x: number;
@@ -36,17 +41,11 @@ type Drifter = {
   size: number;
   phase: number;
   speed: number;
-  dx: number; // slow horizontal drift, px/s
   alpha: number;
   sprite: number;
 };
 
 type Rect = { x: number; y: number; w: number; h: number };
-
-export type EngineCallbacks = {
-  /** Called for a few kernels per burst as they pop, with a stagger delay in seconds (for sound). */
-  onPop?: (delay: number) => void;
-};
 
 const GRAVITY = 1250; // px/s^2
 const MAX_KERNELS = 80;
@@ -56,56 +55,6 @@ function rand(a: number, b: number) {
   return a + Math.random() * (b - a);
 }
 
-/** Illustrated popcorn puff: overlapping buttery blobs + a hull fleck. Drawn, not sampled. */
-function makePuffSprite(px: number, variant: number): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = c.height = px;
-  const g = c.getContext("2d")!;
-  const u = px / 2;
-  g.translate(u, u);
-  const base: [number, number, number][] = [
-    [0, 0.05, 0.4],
-    [-0.36, -0.14, 0.3],
-    [0.35, -0.18, 0.31],
-    [0.02, -0.4, 0.29],
-    [-0.27, 0.32, 0.27],
-    [0.3, 0.3, 0.26],
-  ];
-  const seed = variant * 1.7;
-  const blobs = base.map(([x, y, r], i) => {
-    const j = Math.sin(seed + i * 2.3) * 0.06;
-    return [x + j, y - j, r + Math.cos(seed + i) * 0.03] as [number, number, number];
-  });
-  g.fillStyle = "rgba(90, 55, 10, 0.35)";
-  for (const [x, y, r] of blobs) {
-    g.beginPath();
-    g.arc(x * u, y * u + u * 0.03, r * u * 1.08, 0, Math.PI * 2);
-    g.fill();
-  }
-  for (const [x, y, r] of blobs) {
-    const grd = g.createRadialGradient((x - r * 0.35) * u, (y - r * 0.4) * u, r * u * 0.1, x * u, y * u, r * u);
-    grd.addColorStop(0, "#fffdf4");
-    grd.addColorStop(0.55, "#fff1c9");
-    grd.addColorStop(1, variant % 3 === 2 ? "#f0b545" : "#f4cf78");
-    g.fillStyle = grd;
-    g.beginPath();
-    g.arc(x * u, y * u, r * u, 0, Math.PI * 2);
-    g.fill();
-  }
-  g.fillStyle = "rgba(255, 201, 60, 0.55)";
-  for (let i = 0; i < 3; i++) {
-    const [x, y, r] = blobs[(i * 2 + variant) % blobs.length];
-    g.beginPath();
-    g.ellipse((x + r * 0.2) * u, (y + r * 0.25) * u, r * u * 0.32, r * u * 0.2, 0.6, 0, Math.PI * 2);
-    g.fill();
-  }
-  g.fillStyle = "#a8581b";
-  g.beginPath();
-  g.ellipse(0.05 * u, 0.42 * u, 0.09 * u, 0.055 * u, 0.4, 0, Math.PI * 2);
-  g.fill();
-  return c;
-}
-
 export class PopcornEngine {
   private back: HTMLCanvasElement;
   private front: HTMLCanvasElement;
@@ -113,14 +62,15 @@ export class PopcornEngine {
   private fctx: CanvasRenderingContext2D;
   private root: HTMLElement;
   private logoEl: HTMLElement;
-  private cb: EngineCallbacks;
   private dpr = 1;
   private W = 0;
   private H = 0;
   private logo: Rect = { x: 0, y: 0, w: 0, h: 0 };
   private clear: Rect[] = [];
-  private sprites: HTMLCanvasElement[] = [];
+  private vivid: HTMLCanvasElement[] = [];
+  private soft: HTMLCanvasElement[] = [];
   private kernels: Kernel[] = [];
+  private flecks: Fleck[] = [];
   private drifters: Drifter[] = [];
   private raf = 0;
   private last = 0;
@@ -138,7 +88,6 @@ export class PopcornEngine {
     front: HTMLCanvasElement,
     root: HTMLElement,
     logoEl: HTMLElement,
-    cb: EngineCallbacks = {},
   ) {
     this.back = back;
     this.front = front;
@@ -146,7 +95,6 @@ export class PopcornEngine {
     this.fctx = front.getContext("2d")!;
     this.root = root;
     this.logoEl = logoEl;
-    this.cb = cb;
     this.mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     this.reduced = this.mq.matches;
     this.mq.addEventListener("change", this.onMotionPref);
@@ -176,10 +124,6 @@ export class PopcornEngine {
     document.removeEventListener("visibilitychange", this.onPageVisibility);
   }
 
-  get isReduced() {
-    return this.reduced;
-  }
-
   /** Burst of 6–10 kernels from a root-relative point, drawn in front, arcing out and falling. */
   burst(x: number, y: number) {
     if (this.reduced) return;
@@ -188,21 +132,23 @@ export class PopcornEngine {
     for (let i = 0; i < n; i++) {
       const angle = -Math.PI / 2 + rand(-1.25, 1.25);
       const speed = rand(380, 660);
-      const delay = i < 2 ? 0 : rand(0, 0.12);
+      const delay = i < 2 ? 0 : rand(0, 0.14);
+      const seed = rand(0.04, 0.09);
       this.addKernel({
         layer: "front",
-        x: x + rand(-6, 6),
-        y: y + rand(-6, 6),
+        x: x + rand(-8, 8),
+        y: y + rand(-8, 8),
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         rot: rand(0, Math.PI * 2),
         vr: rand(-9, 9),
         size: s * rand(1.05, 1.5),
         age: -delay,
+        seed,
         life: rand(1.5, 2.2),
-        sprite: Math.floor(rand(0, this.sprites.length)),
+        sprite: Math.floor(rand(0, this.vivid.length)),
+        popped: false,
       });
-      if (i < 4) this.cb.onPop?.(delay + i * 0.035);
     }
     this.syncLoop();
   }
@@ -221,7 +167,10 @@ export class PopcornEngine {
 
   private onMotionPref = () => {
     this.reduced = this.mq.matches;
-    if (this.reduced) this.kernels = [];
+    if (this.reduced) {
+      this.kernels = [];
+      this.flecks = [];
+    }
     this.syncLoop();
     this.draw();
   };
@@ -252,8 +201,9 @@ export class PopcornEngine {
       const q = el.getBoundingClientRect();
       this.clear.push({ x: q.left - box.left, y: q.top - box.top, w: q.width, h: q.height });
     });
-    const px = Math.round(64 * this.dpr);
-    this.sprites = [0, 1, 2, 3].map((v) => makePuffSprite(px, v));
+    const px = Math.round(72 * this.dpr);
+    this.vivid = FLAVORS.flatMap((f) => [0, 1].map((v) => makePuffSprite(px, f, v, true)));
+    this.soft = [0, 1, 2, 3].map((v) => makePuffSprite(Math.round(48 * this.dpr), "butter", v, false));
     this.placeDrifters();
     if (!this.raf) this.draw();
   }
@@ -277,7 +227,6 @@ export class PopcornEngine {
           size,
           phase: rand(0, Math.PI * 2),
           speed: rand(0.35, 0.6),
-          dx: 0,
           alpha: rand(0.28, 0.42),
           sprite: i % 4,
         });
@@ -299,10 +248,8 @@ export class PopcornEngine {
     const s = this.unit();
     const n = Math.random() < 0.5 ? 5 : 6;
     for (let i = 0; i < n; i++) {
-      // fan the launch angles across the top so each kernel clears the logo's edge
       const angle = -Math.PI / 2 + ((i / (n - 1)) * 2 - 1) * 1.05 + rand(-0.12, 0.12);
       const speed = rand(520, 640) * Math.min(1.15, Math.max(0.8, L.w / 300));
-      const delay = 0.45 + i * 0.14 + rand(0, 0.06);
       this.addKernel({
         layer: "back",
         x: L.x + L.w / 2 + rand(-L.w * 0.12, L.w * 0.12),
@@ -312,9 +259,11 @@ export class PopcornEngine {
         rot: rand(0, Math.PI * 2),
         vr: rand(-6, 6),
         size: s * rand(0.9, 1.2),
-        age: -delay,
+        age: -(0.45 + i * 0.14 + rand(0, 0.06)),
+        seed: 0.05,
         life: rand(1.6, 2.1),
-        sprite: i % 4,
+        sprite: Math.floor(rand(0, this.vivid.length)),
+        popped: false,
       });
     }
   }
@@ -351,9 +300,26 @@ export class PopcornEngine {
     const keep: Kernel[] = [];
     for (const k of this.kernels) {
       k.age += dt;
-      if (k.age < 0) {
+      if (k.age < k.seed) {
         keep.push(k);
         continue;
+      }
+      if (!k.popped) {
+        k.popped = true;
+        for (let i = 0; i < 3; i++) {
+          const a = rand(0, Math.PI * 2);
+          const v = rand(120, 240);
+          this.flecks.push({
+            layer: k.layer,
+            x: k.x,
+            y: k.y,
+            vx: Math.cos(a) * v,
+            vy: Math.sin(a) * v - 60,
+            age: 0,
+            life: rand(0.3, 0.5),
+            size: rand(2, 3.5),
+          });
+        }
       }
       if (k.age >= k.life) continue;
       k.vy += GRAVITY * dt;
@@ -365,11 +331,13 @@ export class PopcornEngine {
       keep.push(k);
     }
     this.kernels = keep;
-    for (const d of this.drifters) {
-      d.x += d.dx * dt;
-      if (d.x < -d.size) d.x = this.W + d.size;
-      if (d.x > this.W + d.size) d.x = -d.size;
-    }
+    this.flecks = this.flecks.filter((f) => {
+      f.age += dt;
+      f.vy += GRAVITY * 0.7 * dt;
+      f.x += f.vx * dt;
+      f.y += f.vy * dt;
+      return f.age < f.life;
+    });
   }
 
   private draw() {
@@ -387,22 +355,35 @@ export class PopcornEngine {
       b.save();
       b.translate(d.x, y);
       b.rotate(rot);
-      b.drawImage(this.sprites[d.sprite], -d.size / 2, -d.size / 2, d.size, d.size);
+      b.drawImage(this.soft[d.sprite], -d.size / 2, -d.size / 2, d.size, d.size);
       b.restore();
     }
 
     for (const k of this.kernels) {
       if (k.age < 0) continue;
       const g = k.layer === "back" ? b : f;
-      const pop = Math.min(1, k.age / 0.07); // quick swell as it pops
-      const size = k.size * (0.35 + 0.65 * pop);
-      const fade = Math.min(1, (k.life - k.age) / (k.life * 0.35));
-      g.globalAlpha = Math.max(0, fade);
+      g.globalAlpha = 1;
+      if (k.age < k.seed) {
+        const jiggle = Math.sin(k.age * 140) * 1.5;
+        drawSeed(g, k.x + jiggle, k.y, k.size * 0.32, k.rot);
+        continue;
+      }
+      const size = k.size * popScale(k.age - k.seed);
+      g.globalAlpha = Math.max(0, Math.min(1, (k.life - k.age) / (k.life * 0.35)));
       g.save();
       g.translate(k.x, k.y);
       g.rotate(k.rot);
-      g.drawImage(this.sprites[k.sprite], -size / 2, -size / 2, size, size);
+      g.drawImage(this.vivid[k.sprite], -size / 2, -size / 2, size, size);
       g.restore();
+    }
+
+    for (const fl of this.flecks) {
+      const g = fl.layer === "back" ? b : f;
+      g.globalAlpha = 1 - fl.age / fl.life;
+      g.fillStyle = "#ffc93c";
+      g.beginPath();
+      g.arc(fl.x, fl.y, fl.size, 0, Math.PI * 2);
+      g.fill();
     }
     b.globalAlpha = 1;
     f.globalAlpha = 1;
