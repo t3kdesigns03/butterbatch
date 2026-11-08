@@ -1,35 +1,24 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ShopGrid } from "@/components/shop/ShopGrid";
-import { getMenu } from "@/data/menu";
+import { FlavorMenu } from "@/components/order/FlavorMenu";
+import { OrderSummary } from "@/components/order/OrderSummary";
+import { Specials } from "@/components/order/Specials";
 
 export const metadata: Metadata = {
   title: "Shop",
-  description: "Shop Butter Batch popcorn flavors in medium and large bags. Build your order, then send it to us on Messenger for pickup in Lincoln, NE.",
+  description:
+    "Shop all 13 Butter Batch popcorn flavors in medium and large bags, build a box of 6, then send your order to us on Messenger for pickup in Lincoln, NE.",
   alternates: { canonical: "/shop" },
 };
 
-export default async function ShopPage() {
-  const menu = await getMenu();
+export default function ShopPage() {
   return (
-    <main id="main" className="flex-1 surface-0">
-      <div className="bg-royal py-10 text-white sm:py-14">
-        <div className="mx-auto max-w-6xl px-4">
-          <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">Shop</h1>
-          <p className="mt-2 max-w-xl text-lg text-white/80">
-            Pick your flavors and sizes, then send the order to us on Messenger. {menu.priceNote}
-          </p>
-          <p className="mt-3 text-sm text-white/70">
-            Want something your way?{" "}
-            <Link href="/customize" className="font-semibold text-butter underline underline-offset-4">
-              Build my popcorn
-            </Link>
-          </p>
-        </div>
+    <main id="main" className="flex-1">
+      <div className="mx-auto max-w-6xl px-4 pt-10 sm:pt-14">
+        <h1 className="font-display text-5xl font-bold tracking-tight text-white sm:text-6xl">Shop</h1>
       </div>
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-        <ShopGrid />
-      </div>
+      <Specials />
+      <FlavorMenu />
+      <OrderSummary />
     </main>
   );
 }

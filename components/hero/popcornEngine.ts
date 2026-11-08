@@ -7,7 +7,7 @@
  *
  *   back  canvas — BEHIND the logo: the entrance burst (kernels emerge from behind the logo)
  *                  and up to 8 slow, faint ambient kernels in the margins.
- *   front canvas — IN FRONT: tap/click bursts from the tap point; they fall and fade in ~2s.
+ *   Tap/click bursts are handled page-wide by components/pop/PopLayer.tsx.
  *
  * Each burst kernel shows as a seed for a beat, then pops with an overshoot and a few butter
  * flecks. No WebGL, no libraries.
@@ -15,7 +15,7 @@
 
 import { drawSeed, FLAVORS, makePuffSprite, popScale } from "./sprites";
 
-type Layer = "back" | "front";
+type Layer = "back";
 
 type Kernel = {
   layer: Layer;
@@ -57,9 +57,7 @@ function rand(a: number, b: number) {
 
 export class PopcornEngine {
   private back: HTMLCanvasElement;
-  private front: HTMLCanvasElement;
   private bctx: CanvasRenderingContext2D;
-  private fctx: CanvasRenderingContext2D;
   private root: HTMLElement;
   private logoEl: HTMLElement;
   private dpr = 1;
@@ -85,14 +83,11 @@ export class PopcornEngine {
 
   constructor(
     back: HTMLCanvasElement,
-    front: HTMLCanvasElement,
     root: HTMLElement,
     logoEl: HTMLElement,
   ) {
     this.back = back;
-    this.front = front;
     this.bctx = back.getContext("2d")!;
-    this.fctx = front.getContext("2d")!;
     this.root = root;
     this.logoEl = logoEl;
     this.mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -124,41 +119,6 @@ export class PopcornEngine {
     document.removeEventListener("visibilitychange", this.onPageVisibility);
   }
 
-  /** Burst of 6–10 kernels from a root-relative point, drawn in front, arcing out and falling. */
-  burst(x: number, y: number) {
-    if (this.reduced) return;
-    const n = Math.floor(rand(6, 11));
-    const s = this.unit();
-    for (let i = 0; i < n; i++) {
-      const angle = -Math.PI / 2 + rand(-1.25, 1.25);
-      const speed = rand(380, 660);
-      const delay = i < 2 ? 0 : rand(0, 0.14);
-      const seed = rand(0.04, 0.09);
-      this.addKernel({
-        layer: "front",
-        x: x + rand(-8, 8),
-        y: y + rand(-8, 8),
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        rot: rand(0, Math.PI * 2),
-        vr: rand(-9, 9),
-        size: s * rand(1.05, 1.5),
-        age: -delay,
-        seed,
-        life: rand(1.5, 2.2),
-        sprite: Math.floor(rand(0, this.vivid.length)),
-        popped: false,
-      });
-    }
-    this.syncLoop();
-  }
-
-  /** Burst from the upper middle of the logo (keyboard activation). */
-  burstFromLogo() {
-    const L = this.logo;
-    this.burst(L.x + L.w / 2, L.y + L.h * 0.35);
-  }
-
   // ---------------------------------------------------------------- layout
 
   private unit() {
@@ -186,14 +146,9 @@ export class PopcornEngine {
     this.W = Math.max(1, box.width);
     this.H = Math.max(1, box.height);
     this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-    for (const [c, g] of [
-      [this.back, this.bctx],
-      [this.front, this.fctx],
-    ] as const) {
-      c.width = Math.round(this.W * this.dpr);
-      c.height = Math.round(this.H * this.dpr);
-      g.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-    }
+    this.back.width = Math.round(this.W * this.dpr);
+    this.back.height = Math.round(this.H * this.dpr);
+    this.bctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     const r = this.logoEl.getBoundingClientRect();
     this.logo = { x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height };
     this.clear = [this.logo];
@@ -208,7 +163,7 @@ export class PopcornEngine {
     if (!this.raf) this.draw();
   }
 
-  /** Up to 8 faint kernels in the margins: never over the logo box or the headline/buttons column. */
+  /** Up to 8 small kernels in the margins: never over the logo box or the headline/buttons column. */
   private placeDrifters() {
     const count = this.W < 640 ? 5 : MAX_DRIFTERS;
     const pad = 14;
@@ -227,7 +182,7 @@ export class PopcornEngine {
           size,
           phase: rand(0, Math.PI * 2),
           speed: rand(0.35, 0.6),
-          alpha: rand(0.28, 0.42),
+          alpha: rand(0.85, 1),
           sprite: i % 4,
         });
         break;
@@ -342,9 +297,7 @@ export class PopcornEngine {
 
   private draw() {
     const b = this.bctx;
-    const f = this.fctx;
     b.clearRect(0, 0, this.W, this.H);
-    f.clearRect(0, 0, this.W, this.H);
     if (this.reduced) return; // static hero: logo + text only
 
     for (const d of this.drifters) {
@@ -361,7 +314,7 @@ export class PopcornEngine {
 
     for (const k of this.kernels) {
       if (k.age < 0) continue;
-      const g = k.layer === "back" ? b : f;
+      const g = b;
       g.globalAlpha = 1;
       if (k.age < k.seed) {
         const jiggle = Math.sin(k.age * 140) * 1.5;
@@ -378,7 +331,7 @@ export class PopcornEngine {
     }
 
     for (const fl of this.flecks) {
-      const g = fl.layer === "back" ? b : f;
+      const g = b;
       g.globalAlpha = 1 - fl.age / fl.life;
       g.fillStyle = "#ffc93c";
       g.beginPath();
@@ -386,6 +339,5 @@ export class PopcornEngine {
       g.fill();
     }
     b.globalAlpha = 1;
-    f.globalAlpha = 1;
   }
 }

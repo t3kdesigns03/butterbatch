@@ -88,6 +88,21 @@ export type CustomizeOptions = {
   toppings: { id: string; name: string; price: number }[];
 };
 
+/** Shown on a flavor card when the business has no photo of that exact flavor yet. Real photo, labeled as assorted. */
+export type FallbackPhoto = Photo & { tag: string };
+
+export type Specials = {
+  /** Monthly special banner = this bundle (must exist in bundles). */
+  monthlyBundleId: string;
+  /** Weekly special flavor id. null = default to the first Specialty flavor in this file. Owner picks. */
+  weeklyFlavorId: string | null;
+};
+
+export type BoxOptions = {
+  /** "Build Your Box": exactly this many bags. Each bag is priced at its menu price — no bundle discount. */
+  bags: number;
+};
+
 export type Menu = {
   /** ISO date of the menu board this data was transcribed from. */
   effectiveDate: string;
@@ -97,6 +112,9 @@ export type Menu = {
   categories: MenuCategory[];
   bundles: Bundle[];
   customize: CustomizeOptions;
+  specials: Specials;
+  box: BoxOptions;
+  fallbackPhoto: FallbackPhoto;
   rotating: RotatingItem[];
 };
 
@@ -132,7 +150,11 @@ const MENU: Menu = {
         { size: "medium", label: "Medium bag", price: 9 },
         { size: "large", label: "Large bag", price: 12 },
       ],
-      flavors: [flavor("Butter", "butter"), flavor("Cheddar", "cheddar"), flavor("Kettle", "kettle")],
+      flavors: [
+        flavor("Butter", "butter", { photo: { src: "/photos/flavors/butter.jpg", alt: "A real bag of Butter Batch Butter popcorn on the shop shelf, with its Butter flavor sticker." } }),
+        flavor("Cheddar", "cheddar", { photo: { src: "/photos/flavors/cheddar.jpg", alt: "A real bag of Butter Batch Cheddar popcorn on the shop shelf, with its Cheddar flavor sticker." } }),
+        flavor("Kettle", "kettle", { photo: { src: "/photos/flavors/kettle.jpg", alt: "A real bag of Butter Batch Kettle corn on the shop shelf, with its Kettle flavor sticker." } }),
+      ],
     },
     {
       id: "specialty",
@@ -144,13 +166,13 @@ const MENU: Menu = {
       ],
       flavors: [
         flavor("Parmesan Garlic", "butter"),
-        flavor("Dill Pickle", "butter"),
+        flavor("Dill Pickle", "butter", { photo: { src: "/photos/flavors/dill-pickle.jpg", alt: "A real bag of Butter Batch Dill Pickle popcorn on the shop shelf, with its Dill Pickle flavor sticker." } }),
         flavor("Hot Honey BBQ", "caramel"),
-        flavor("Spicy Dill", "butter"),
-        flavor("Caramel Apple", "apple"),
+        flavor("Spicy Dill", "butter", { photo: { src: "/photos/flavors/spicy-dill.jpg", alt: "A real bag of Butter Batch Spicy Dill popcorn on the shop shelf, with its Spicy Dill flavor sticker." } }),
+        flavor("Caramel Apple", "apple", { photo: { src: "/photos/flavors/caramel-apple.jpg", alt: "Real bags of Butter Batch Caramel Apple popcorn, green-coated, with Caramel Apple flavor stickers." } }),
         flavor("Maple Bourbon Habanero", "caramel"),
-        flavor("Jalapeño Cheddar", "cheddar"),
-        flavor("Salted Caramel", "caramel"),
+        flavor("Jalapeño Cheddar", "cheddar", { photo: { src: "/photos/flavors/jalapeno-cheddar.jpg", alt: "A real bag of Butter Batch Jalapeño Cheddar popcorn on the shop shelf, with its Jalapeño Cheddar flavor sticker." } }),
+        flavor("Salted Caramel", "caramel", { photo: { src: "/photos/flavors/salted-caramel.jpg", alt: "A real bag of Butter Batch Salted Caramel popcorn on the shop shelf, with its Salted Caramel flavor sticker." } }),
         flavor("Loaded Baked Potato", "cheddar"),
         flavor("Cheddar Caramel Craze", "cheddar", {
           photo: {
@@ -174,6 +196,13 @@ const MENU: Menu = {
       source: "Facebook menu post, Sept 2, 2026 (not on Menu1.jpg)",
     },
   ],
+  specials: { monthlyBundleId: "event-bundle", weeklyFlavorId: null },
+  box: { bags: 6 },
+  fallbackPhoto: {
+    src: "/photos/store-display.jpg",
+    alt: "A Butter Batch shelf stocked with bags of several flavors.",
+    tag: "Photo: assorted bags",
+  },
   customize: {
     maxFlavors: 2,
     mixPricing: "highest",

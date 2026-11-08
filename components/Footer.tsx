@@ -21,7 +21,7 @@ export async function Footer() {
           <OrderButton />
         </div>
 
-        <div className="mt-12 grid gap-6 border-t border-white/10 pt-8 text-left sm:grid-cols-3">
+        <div className="mt-12 grid gap-6 text-left sm:grid-cols-3">
           <div>
             <p className="text-sm font-semibold tracking-wide text-butter uppercase">{site.name}</p>
             <p className="mt-1 text-white/75">Lincoln, Nebraska</p>
@@ -40,7 +40,7 @@ export async function Footer() {
               href={FACEBOOK_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 inline-flex min-h-11 items-center gap-2 text-white underline underline-offset-4 hover:text-butter-light"
+              className="mt-1 inline-flex min-h-11 items-center gap-2 font-semibold text-butter hover:text-butter-light"
             >
               Butter Batch on Facebook
               <ExternalIcon />
@@ -49,14 +49,14 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-sm text-white/60 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 text-sm text-white/75 sm:flex-row">
           {/* site.name already ends in "Co." — no extra period. */}
           <p>
             &copy; {year} {site.name} Prices may change.
           </p>
           <Link
             href="/privacy"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 underline underline-offset-4 hover:text-white"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 font-semibold text-butter hover:text-butter-light"
           >
             Privacy
           </Link>

@@ -8,7 +8,7 @@ const POINTS = [
 
 export function About() {
   return (
-    <section id="about" aria-labelledby="about-heading" className="surface-1 py-16 sm:py-24">
+    <section id="about" aria-labelledby="about-heading" className="py-14 sm:py-20">
       <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 md:grid-cols-[3fr_2fr]">
         <div>
           <h2 id="about-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
@@ -21,9 +21,8 @@ export function About() {
           </p>
           <ul className="mt-8 grid gap-4 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
             {POINTS.map((p) => (
-              <li key={p.title} className="rounded-2xl border border-white/10 surface-2 p-5">
+              <li key={p.title}>
                 <p className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-white">
-                  <span aria-hidden="true" className="h-2 w-2 rounded-full bg-butter" />
                   {p.title}
                 </p>
                 <p className="mt-1 text-white/75">{p.body}</p>
@@ -31,7 +30,7 @@ export function About() {
             ))}
           </ul>
           {/* The one script accent on the site. */}
-          <p className="mt-8 font-script text-2xl text-white">Thank you for supporting small business!</p>
+          <p className="mt-8 font-script text-3xl text-butter">Thank you for supporting small business!</p>
         </div>
 
         <figure className="mx-auto w-full max-w-sm">

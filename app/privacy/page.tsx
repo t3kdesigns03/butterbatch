@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <main id="main" className="flex-1 surface-0 py-14">
+      <main id="main" className="flex-1 py-14">
         <article className="mx-auto max-w-2xl px-4 text-lg leading-relaxed">
           <h1 className="font-display text-4xl font-bold tracking-tight text-white">Privacy</h1>
           <p className="mt-2 text-base text-white/70">Last updated November 2026</p>
@@ -32,8 +32,10 @@ export default function PrivacyPage() {
             clearing your browser&rsquo;s site data.
           </p>
           <p className="mt-2">
-            When you tap &ldquo;Copy order &amp; message us&rdquo;, your order text is copied to your device&rsquo;s
-            clipboard so you can paste it into Messenger. Nothing is sent until you choose to send it there.
+            Your order choices (Lincoln pickup or shipping, your pickup spot, and how you plan to pay) are saved the
+            same way, only in your browser. When you tap &ldquo;Proceed&rdquo;, your order text is copied to your
+            device&rsquo;s clipboard so you can paste it into Messenger. Nothing is sent until you choose to send it
+            there. No payment or card details are ever entered on this site.
           </p>
 
           <h2 className="mt-8 font-display text-2xl font-bold tracking-tight text-white">Ordering</h2>

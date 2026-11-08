@@ -29,6 +29,12 @@ function sanitize(raw: unknown): CartItem[] {
       out.push({ id: o.id, kind: "flavor", flavorId: o.flavorId, size: o.size as "medium" | "large", qty });
     } else if (o.kind === "custom" && ids && isSize(o.size) && (o.butter === "light" || o.butter === "regular" || o.butter === "extra")) {
       out.push({ id: o.id, kind: "custom", flavorIds: ids, size: o.size as "medium" | "large", butter: o.butter, qty });
+    } else if (o.kind === "box" && Array.isArray(o.bags) && o.bags.length <= 12) {
+      const bags = (o.bags as unknown[]).filter(
+        (b): b is { flavorId: string; size: "medium" | "large" } =>
+          !!b && typeof b === "object" && isStr((b as Record<string, unknown>).flavorId) && isSize((b as Record<string, unknown>).size),
+      );
+      if (bags.length === o.bags.length) out.push({ id: o.id, kind: "box", bags: bags.map((b) => ({ flavorId: b.flavorId, size: b.size })), qty });
     } else if (o.kind === "bundle" && isStr(o.bundleId) && ids) {
       out.push({ id: o.id, kind: "bundle", bundleId: o.bundleId, flavorIds: ids, qty });
     }

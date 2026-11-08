@@ -14,7 +14,7 @@ import { makePuffSprite, popScale, type Flavor as SpriteLook } from "../hero/spr
  */
 type Props = { looks: Look[]; size: SizeId; butter: number };
 
-type K = { x: number; y: number; size: number; rot: number; delay: number; sprite: number };
+type K = { x: number; y: number; size: number; rot: number; delay: number; sprite: number; phase: number };
 
 function rand(seed: number) {
   let s = seed >>> 0;
@@ -57,8 +57,10 @@ export function Bucket({ looks, size, butter }: Props) {
       // above it. Large = a taller, fuller mound than Medium.
       const rimY = H * 0.4;
       const rimHalf = W * 0.42;
-      const moundH = H * (size === "large" ? 0.3 : 0.16);
-      const count = size === "large" ? 95 : 62;
+      // a 2nd flavor grows the pile; size scales it
+      const grow = 1 + 0.3 * (Math.max(1, looks.length) - 1);
+      const moundH = H * (size === "large" ? 0.3 : 0.16) * (1 + 0.12 * (grow - 1) / 0.3);
+      const count = Math.round((size === "large" ? 95 : 62) * grow);
       const r = rand(size === "large" ? 7 : 3);
       const kSize = W * 0.15;
       const list: K[] = [];
@@ -72,6 +74,7 @@ export function Bucket({ looks, size, butter }: Props) {
           rot: r() * Math.PI * 2,
           delay: 0,
           sprite: Math.floor(r() * sprites.length),
+          phase: r() * Math.PI * 2,
         });
       }
       // draw upper kernels first so lower/front ones overlap them; pop from the bottom up
@@ -82,6 +85,7 @@ export function Bucket({ looks, size, butter }: Props) {
     };
 
     const start = performance.now();
+    let visible = true;
     const frame = (now: number) => {
       const t = (now - start) / 1000;
       g.clearRect(0, 0, W, H);
@@ -97,13 +101,15 @@ export function Bucket({ looks, size, butter }: Props) {
         // rises UP from 22px below its spot, with the pop overshoot
         const rise = (1 - (1 - a) * (1 - a)) * 22;
         const sz = k.size * (k.delay < 0 ? 1 : popScale(age));
+        // idle: a gentle bob once settled (the bucket and logo label never move)
+        const bob = reduced ? 0 : Math.sin(t * 1.3 + k.phase) * 1.4;
         g.save();
-        g.translate(k.x, k.y + 22 - rise);
+        g.translate(k.x, k.y + 22 - rise + bob);
         g.rotate(k.rot);
         g.drawImage(sprites[k.sprite], -sz / 2, -sz / 2, sz, sz);
         g.restore();
       }
-      if (busy) raf = requestAnimationFrame(frame);
+      raf = (busy || !reduced) && visible ? requestAnimationFrame(frame) : 0;
     };
 
     build();
@@ -115,9 +121,16 @@ export function Bucket({ looks, size, butter }: Props) {
       raf = requestAnimationFrame(frame);
     });
     ro.observe(wrap);
+    // pause the idle bob when the bucket is off-screen
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !raf) raf = requestAnimationFrame(frame);
+    });
+    io.observe(wrap);
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
     };
     // key captures looks/size/butter
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,11 +165,17 @@ export function Bucket({ looks, size, butter }: Props) {
           <stop offset="0.75" stopColor="#000" stopOpacity="0" />
           <stop offset="1" stopColor="#000" stopOpacity="0.2" />
         </linearGradient>
-        <path d="M8 47 L92 47 L82 110 L18 110 Z" fill="none" stroke="#000" strokeOpacity="0.3" strokeWidth="0.6" />
-        <rect x="6" y="44" width="88" height="5" rx="2.5" fill="#ffc93c" stroke="#000" strokeOpacity="0.25" strokeWidth="0.5" />
+        <rect x="6" y="44" width="88" height="5" rx="2.5" fill="#ffc93c" />
+        {/* one slow butter drip down the LEFT side of the bucket — never over the logo label */}
+        {butter >= 1 && (
+          <g className="bb-drip">
+            <path d="M14.2 48.5 C14.2 52, 13.4 55, 13.4 57.5 a1.6 1.6 0 0 0 3.2 0 C16.6 55, 15.8 52, 15.8 48.5 Z" fill="#ffd34d" />
+            <ellipse cx="14.4" cy="56.6" rx="0.45" ry="0.8" fill="#fff8d6" />
+          </g>
+        )}
       </svg>
       {/* REAL logo file as the bucket label — unmodified, square corners */}
-      <div className="absolute top-[53%] left-1/2 w-[50%] -translate-x-1/2 bg-white p-[3px] shadow-md">
+      <div className="absolute top-[53%] left-1/2 w-[50%] -translate-x-1/2">
         <Image src="/brand/butter-batch-logo.png" alt="" width={1024} height={846} sizes="160px" className="block h-auto w-full" />
       </div>
     </div>
