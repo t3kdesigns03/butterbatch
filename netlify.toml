@@ -1,6 +1,8 @@
 # Netlify build config for the Next.js (App Router) site.
-# Netlify detects Next.js and applies its Next.js runtime automatically (SSR, image CDN, headers
-# from next.config.ts). No secrets or environment variables are needed for Phase 1.
+# The Next.js runtime (OpenNext adapter) turns the .next build into Netlify Functions,
+# Image CDN routes and response headers. It is declared explicitly below because the
+# first production deploy published the raw .next folder (runtime not applied -> 404).
+# No secrets or environment variables are needed for Phase 1.
 
 [build]
   command = "npm run build"
@@ -9,3 +11,6 @@
 [build.environment]
   NODE_VERSION = "22"
   NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
