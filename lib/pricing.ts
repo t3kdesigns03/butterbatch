@@ -14,7 +14,18 @@ export type CustomItem = {
   qty: number;
 };
 export type BundleItem = { id: string; kind: "bundle"; bundleId: string; flavorIds: string[]; qty: number };
-export type CartItem = FlavorItem | CustomItem | BundleItem;
+/** "Build Your Box": exactly menu.box.bags bags, each priced at its own menu price (no bundle price). */
+export type BoxItem = { id: string; kind: "box"; bags: { flavorId: string; size: SizeId }[]; qty: number };
+export type CartItem = FlavorItem | CustomItem | BundleItem | BoxItem;
+
+/** How the customer wants it and how they'll pay. Nothing here changes a price. */
+export type OrderPrefs = {
+  fulfillment: "pickup" | "ship";
+  /** pickup location id from data/site.ts, or null = decide in Messenger */
+  pickupId: string | null;
+  payment: "messenger" | "venmo" | "cash";
+};
+export const DEFAULT_PREFS: OrderPrefs = { fulfillment: "pickup", pickupId: null, payment: "messenger" };
 
 /** Omit that distributes over the union, so each item kind keeps its own fields. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -80,6 +91,18 @@ export function unitPrice(menu: Menu, item: CartItem): number | null {
     if (!menu.customize.butterLevels.some((b) => b.id === item.butter)) return null;
     return customUnitPrice(menu, item.flavorIds, item.size);
   }
+  if (item.kind === "box") {
+    if (item.bags.length !== menu.box.bags) return null;
+    let sum = 0;
+    for (const b of item.bags) {
+      const hit = findFlavor(menu, b.flavorId);
+      if (!hit || !hit.flavor.available) return null;
+      const p = sizePrice(hit.category, b.size);
+      if (p == null) return null;
+      sum += p;
+    }
+    return sum;
+  }
   const bundle = findBundle(menu, item.bundleId);
   if (!bundle || item.flavorIds.length !== bundle.bags) return null;
   for (const id of item.flavorIds) {
@@ -126,6 +149,12 @@ export function describe(menu: Menu, item: CartItem): { title: string; details: 
       details: [sizeLabel(menu, item.size), `Butter: ${butter}`],
     };
   }
+  if (item.kind === "box") {
+    return {
+      title: `Box of ${item.bags.length}`,
+      details: item.bags.map((b, i) => `Bag ${i + 1}: ${flavorName(menu, b.flavorId)} (${sizeLabel(menu, b.size).toLowerCase()})`),
+    };
+  }
   const bundle = findBundle(menu, item.bundleId);
   const size = bundle ? sizeLabel(menu, bundle.size).toLowerCase() : "bag";
   return {
@@ -138,8 +167,21 @@ export function money(n: number): string {
   return Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`;
 }
 
+export type PickupSpot = { id: string; name: string; street: string; cityLine: string };
+
+const PAYMENT_LABEL: Record<OrderPrefs["payment"], string> = {
+  messenger: "Arrange in Messenger",
+  venmo: "Venmo",
+  cash: "Cash at pickup",
+};
+
 /** The Messenger order text: every item, size, choices, line totals and the estimated total. */
-export function orderMessage(menu: Menu, items: CartItem[]): string {
+export function orderMessage(
+  menu: Menu,
+  items: CartItem[],
+  prefs: OrderPrefs = DEFAULT_PREFS,
+  spots: PickupSpot[] = [],
+): string {
   const lines = pricedItems(menu, items);
   const out = ["Hi Butter Batch! I'd like to order:", ""];
   for (const { item, unit, total } of lines) {
@@ -147,8 +189,19 @@ export function orderMessage(menu: Menu, items: CartItem[]): string {
     out.push(`• ${item.qty} × ${d.title} — ${money(unit)} each = ${money(total)}`);
     for (const detail of d.details) out.push(`   - ${detail}`);
   }
-  out.push("", `Estimated total: ${money(cartTotal(menu, items))}`);
-  out.push("(Menu-board prices — please confirm my total and a pickup time. Thanks!)");
+  const subtotal = cartTotal(menu, items);
+  const spot = spots.find((s) => s.id === prefs.pickupId);
+  out.push("", `Subtotal: ${money(subtotal)}`, "Tax: confirmed in Messenger");
+  if (prefs.fulfillment === "ship") out.push("Shipping: please quote in Messenger");
+  out.push(`Estimated total: ${money(subtotal)} + tax${prefs.fulfillment === "ship" ? " + shipping" : ""}`);
+  out.push("");
+  out.push(
+    prefs.fulfillment === "pickup"
+      ? `Fulfillment: Lincoln pickup${spot ? ` at ${spot.name}, ${spot.street}` : " (spot to confirm)"}`
+      : "Fulfillment: Ship it (please quote shipping)",
+  );
+  out.push(`Payment: ${PAYMENT_LABEL[prefs.payment]}`);
+  out.push("(Menu-board prices — please confirm my total and a time. Thanks!)");
   return out.join("\n");
 }
 
@@ -158,6 +211,8 @@ export function sameSpec(a: CartItem, b: CartItem): boolean {
   if (a.kind === "flavor" && b.kind === "flavor") return a.flavorId === b.flavorId && a.size === b.size;
   if (a.kind === "custom" && b.kind === "custom")
     return a.size === b.size && a.butter === b.butter && a.flavorIds.join("|") === b.flavorIds.join("|");
+  if (a.kind === "box" && b.kind === "box")
+    return a.bags.map((x) => x.flavorId + ":" + x.size).join("|") === b.bags.map((x) => x.flavorId + ":" + x.size).join("|");
   if (a.kind === "bundle" && b.kind === "bundle")
     return a.bundleId === b.bundleId && a.flavorIds.join("|") === b.flavorIds.join("|");
   return false;

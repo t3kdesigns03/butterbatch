@@ -45,7 +45,7 @@ export function Tour() {
             type="button"
             onClick={() => go(index - 1)}
             disabled={index === 0}
-            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 surface-2 text-white hover:bg-white/5 disabled:opacity-40"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-royal hover:bg-butter-light disabled:opacity-40"
           >
             <span className="sr-only">Previous stop</span>
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -91,8 +91,8 @@ export function Tour() {
             aria-label={`${i + 1} of ${tourStops.length}: ${stop.title}`}
             className="relative w-full shrink-0 snap-start snap-always"
           >
-            <div className="grid gap-0 overflow-hidden rounded-3xl surface-2 md:grid-cols-[1.2fr_1fr]">
-              <figure className="relative flex h-[52vh] max-h-[520px] min-h-[280px] items-center justify-center bg-black/40">
+            <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] md:items-center">
+              <figure className="relative flex h-[52vh] max-h-[520px] min-h-[280px] items-center justify-center overflow-hidden rounded-3xl">
                 <Image
                   src={stop.photo.src}
                   alt={stop.photo.alt}
@@ -105,7 +105,7 @@ export function Tour() {
                   Photo: Butter Batch Popcorn Co.
                 </figcaption>
               </figure>
-              <div className="flex flex-col p-5 sm:p-7">
+              <div className="flex flex-col">
                 <h2 className="font-display text-3xl font-bold tracking-tight text-butter">{stop.title}</h2>
                 <p className="mt-2 text-lg text-white/80">{stop.caption}</p>
                 {stop.pictured && <p className="mt-1 text-sm text-white/65">{stop.pictured}</p>}
@@ -113,7 +113,7 @@ export function Tour() {
                 {stop.id === "pickup" && (
                   <ul className="mt-4 space-y-3">
                     {pickupLocations.map((loc) => (
-                      <li key={loc.id} className="rounded-2xl border border-white/10 p-4">
+                      <li key={loc.id}>
                         <div className="flex items-start gap-2">
                           <PinIcon className="mt-0.5 h-5 w-5 shrink-0 text-white/40" />
                           <div>
@@ -127,7 +127,7 @@ export function Tour() {
                           href={mapsUrl(loc)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-sm font-semibold text-white hover:bg-white/5"
+                          className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-bold text-royal hover:bg-butter-light"
                         >
                           Get directions <ExternalIcon />
                           <span className="sr-only">to {loc.name} (opens Google Maps in a new tab)</span>
@@ -140,7 +140,7 @@ export function Tour() {
                 {stop.id === "events" && (
                   <div className="mt-4 space-y-3">
                     {bundle && (
-                      <div className="flex items-center justify-between rounded-2xl border border-white/10 p-4">
+                      <div className="flex items-center justify-between gap-4">
                         <div>
                           <p className="font-semibold text-white">{bundle.name}</p>
                           <p className="text-sm text-white/70">{bundle.description}</p>
@@ -156,7 +156,7 @@ export function Tour() {
                         href={FACEBOOK_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-5 text-sm font-semibold text-white hover:bg-white/5"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold text-royal hover:bg-butter-light"
                       >
                         Follow on Facebook <ExternalIcon />
                         <span className="sr-only">(opens in a new tab)</span>
@@ -180,7 +180,7 @@ export function Tour() {
             className="inline-flex h-11 w-11 items-center justify-center rounded-full"
           >
             <span className="sr-only">Go to stop {i + 1}: {stop.title}</span>
-            <span aria-hidden="true" className={`block h-2.5 rounded-full transition-all ${i === index ? "w-6 bg-butter" : "w-2.5 bg-white/30"}`} />
+            <span aria-hidden="true" className={`block h-2.5 rounded-full transition-all ${i === index ? "w-6 bg-butter" : "w-2.5 bg-white"}`} />
           </button>
         ))}
       </div>

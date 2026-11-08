@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Inter, Yellowtail } from "next/font/google";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { PopLayer } from "@/components/pop/PopLayer";
 import { getMenu } from "@/data/menu";
 import { FACEBOOK_URL, site, siteUrl } from "@/data/site";
 import "./globals.css";
@@ -93,6 +94,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
           {children}
           <Footer />
+          {/* page-wide popping: taps on buttons/cards burst kernels UP from the tap point (silent) */}
+          <PopLayer />
         </CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd() }} />
       </body>

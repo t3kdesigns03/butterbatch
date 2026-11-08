@@ -1,17 +1,13 @@
 @import "tailwindcss";
 
-/* Butter Batch V4 — dark theme on ONE blue.
-   - Royal blue = LOGO.jpg's background (#013893). It is a runtime variable (--logo-bg): the hero
-     re-samples it from the served logo image (encoders shift it by a level or two) so the logo's
-     edges never show a seam. Header, hero and footer all use it, so they are always identical.
-   - Every dark surface is that SAME blue with black laid over it at a fixed opacity (surface-0..3).
-     No other blue/navy hue exists in the theme.
-   - Yellow is the single accent. Red lives only inside the logo artwork. */
-@theme inline {
-  --color-royal: var(--logo-bg);
-}
-
+/* Butter Batch V6 — ONE color, seamless, no lines.
+   - The entire page is exactly #013893 (the logo's own background), header to footer. No section,
+     card, panel or bar gets a different fill, and nothing gets a border, divider or outline.
+   - Separation comes from spacing, the real bag photos, yellow badges/buttons and text.
+   - Yellow is the single accent. Red lives only inside the logo artwork.
+   - The one exception: a soft yellow halo for keyboard focus (accessibility). */
 @theme {
+  --color-royal: #013893;
   --color-butter: #ffc93c;
   --color-butter-light: #ffe38a;
 
@@ -23,30 +19,12 @@
 
 :root {
   color-scheme: dark;
-  --logo-bg: #013893;
-}
-
-/* Dark surfaces: royal blue + a black overlay. Higher number = lighter (less black). */
-@utility surface-0 {
-  background-color: var(--logo-bg);
-  background-image: linear-gradient(rgb(0 0 0 / 0.62), rgb(0 0 0 / 0.62));
-}
-@utility surface-1 {
-  background-color: var(--logo-bg);
-  background-image: linear-gradient(rgb(0 0 0 / 0.52), rgb(0 0 0 / 0.52));
-}
-@utility surface-2 {
-  background-color: var(--logo-bg);
-  background-image: linear-gradient(rgb(0 0 0 / 0.38), rgb(0 0 0 / 0.38));
-}
-@utility surface-3 {
-  background-color: var(--logo-bg);
-  background-image: linear-gradient(rgb(0 0 0 / 0.24), rgb(0 0 0 / 0.24));
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  background-color: #013893;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -56,9 +34,7 @@ html {
 }
 
 body {
-  /* surface-0 for the whole page, so nothing below the hero can ever fall back to white */
-  background-color: var(--logo-bg);
-  background-image: linear-gradient(rgb(0 0 0 / 0.62), rgb(0 0 0 / 0.62));
+  background-color: #013893;
   color: #fff;
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -69,9 +45,28 @@ section[id] {
   scroll-margin-top: 4.5rem;
 }
 
-/* Visible focus for keyboard users everywhere. */
+/* Accessibility exception: keyboard focus gets a soft yellow halo (no hard outline line). */
 :focus-visible {
-  outline: 3px solid var(--color-butter);
-  outline-offset: 3px;
-  border-radius: 8px;
+  outline: none;
+  box-shadow:
+    0 0 0 3px #013893,
+    0 0 0 6px rgb(255 201 60 / 0.95),
+    0 0 18px 6px rgb(255 201 60 / 0.55);
+  border-radius: 9999px;
+}
+
+/* Customize bucket: one slow butter drip (left side, never over the logo label) */
+@keyframes bb-drip {
+  0% { transform: translateY(0) scaleY(0.4); opacity: 0; }
+  12% { opacity: 1; }
+  70% { transform: translateY(14px) scaleY(1); opacity: 1; }
+  100% { transform: translateY(18px) scaleY(1); opacity: 0; }
+}
+.bb-drip {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: bb-drip 5s ease-in infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-drip { animation: none; }
 }

@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function TourPage() {
   return (
-    <main id="main" className="flex-1 surface-0">
-      <div className="bg-royal py-10 text-white sm:py-14">
+    <main id="main" className="flex-1">
+      <div className="py-10 text-white sm:py-14">
         <div className="mx-auto max-w-5xl px-4">
           <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">Tour</h1>
           <p className="mt-2 max-w-xl text-lg text-white/80">A quick look around, in our own photos. Swipe or use the arrows.</p>

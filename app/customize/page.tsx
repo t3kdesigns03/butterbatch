@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function CustomizePage() {
   return (
-    <main id="main" className="flex-1 surface-0">
-      <div className="bg-royal py-10 text-white sm:py-14">
+    <main id="main" className="flex-1">
+      <div className="py-10 text-white sm:py-14">
         <div className="mx-auto max-w-6xl px-4">
           <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">Build My Popcorn</h1>
           <p className="mt-2 max-w-xl text-lg text-white/80">
