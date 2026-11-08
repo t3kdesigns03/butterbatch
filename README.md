@@ -20,7 +20,7 @@ Node 20.9+ (Netlify uses Node 22, see `netlify.toml` / `.nvmrc`).
 | --- | --- |
 | Menu (flavors, sizes, prices, availability) | `data/menu.ts` — the only source. Components call `getMenu()`. |
 | Contact links, pickup locations | `data/site.ts` |
-| Living logo hero | `components/hero/` — `HeroStage.tsx` (layers, hint, mute toggle), `popcornEngine.ts` (canvas bursts), `popSound.ts` (synth pop) |
+| Living logo hero | `components/hero/` — `HeroStage.tsx` (layers, hint), `PopcornIntro.tsx` (full-screen opening burst), `popcornEngine.ts` (tap/entrance bursts), `sprites.ts` (drawn popcorn) |
 | Page sections | `components/*.tsx`, composed in `app/page.tsx` |
 | Security headers / CSP | `next.config.ts` |
 | SEO | `app/layout.tsx` (metadata + JSON-LD), `app/opengraph-image.jpg`, `app/robots.ts`, `app/sitemap.ts` |

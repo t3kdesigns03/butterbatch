@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { PopcornEngine } from "./popcornEngine";
-import { PopSound } from "./popSound";
+import { PopcornIntro } from "./PopcornIntro";
 
 const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
 function subscribeReduced(cb: () => void) {
@@ -47,28 +47,20 @@ export function HeroStage({ children }: { children: ReactNode }) {
   const frontRef = useRef<HTMLCanvasElement>(null);
   const logoRef = useRef<HTMLButtonElement>(null);
   const engineRef = useRef<PopcornEngine | null>(null);
-  const soundRef = useRef<PopSound | null>(null);
   const [popped, setPopped] = useState(false);
-  const [soundOn, setSoundOn] = useState(false);
   const reduced = useSyncExternalStore(subscribeReduced, getReduced, getReducedServer);
 
   useEffect(() => {
     let cancelled = false;
-    const sound = new PopSound();
-    soundRef.current = sound;
     // Load the engine after first paint so it never competes with the logo (LCP).
     import("./popcornEngine").then(({ PopcornEngine }) => {
       if (cancelled || !backRef.current || !frontRef.current || !rootRef.current || !logoRef.current) return;
-      engineRef.current = new PopcornEngine(backRef.current, frontRef.current, rootRef.current, logoRef.current, {
-        onPop: (delay) => sound.pop(delay),
-      });
+      engineRef.current = new PopcornEngine(backRef.current, frontRef.current, rootRef.current, logoRef.current);
     });
     return () => {
       cancelled = true;
       engineRef.current?.destroy();
       engineRef.current = null;
-      sound.dispose();
-      soundRef.current = null;
     };
   }, []);
 
@@ -87,28 +79,12 @@ export function HeroStage({ children }: { children: ReactNode }) {
     setPopped(true);
   }
 
-  function toggleSound() {
-    const next = !soundOn;
-    soundRef.current?.setMuted(!next);
-    setSoundOn(next);
-  }
-
   return (
     <div ref={rootRef} className="relative isolate select-none" onPointerDown={onPointerDown}>
+      <PopcornIntro />
       <canvas ref={backRef} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
       <canvas ref={frontRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 h-full w-full" />
 
-      {!reduced && (
-        <button
-          type="button"
-          onClick={toggleSound}
-          aria-pressed={soundOn}
-          className="absolute top-3 right-3 z-30 inline-flex h-11 w-11 items-center justify-center rounded-full text-white/75 transition-colors hover:bg-white/10 hover:text-white"
-        >
-          <span className="sr-only">Pop sound</span>
-          {soundOn ? <SoundOnIcon /> : <SoundOffIcon />}
-        </button>
-      )}
 
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-4 pt-10 pb-16 text-center sm:pt-14 sm:pb-20">
         <button
@@ -149,23 +125,5 @@ export function HeroStage({ children }: { children: ReactNode }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function SoundOffIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-      <path d="m22 9-6 6M16 9l6 6" />
-    </svg>
-  );
-}
-
-function SoundOnIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-      <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
-    </svg>
   );
 }
