@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Alfa_Slab_One, Oswald, Yellowtail } from "next/font/google";
+import { Bricolage_Grotesque, Inter, Yellowtail } from "next/font/google";
 import { FACEBOOK_URL, site, siteUrl } from "@/data/site";
 import "./globals.css";
 
-const alfa = Alfa_Slab_One({ weight: "400", subsets: ["latin"], variable: "--font-alfa", display: "swap" });
-const oswald = Oswald({ subsets: ["latin"], variable: "--font-oswald", display: "swap" });
+// Two typefaces: Bricolage Grotesque (display) + Inter (text). Yellowtail = one small accent only.
+const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const yellowtail = Yellowtail({ weight: "400", subsets: ["latin"], variable: "--font-yellowtail", display: "swap" });
 
 export const metadata: Metadata = {
@@ -74,11 +75,11 @@ function jsonLd() {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${alfa.variable} ${oswald.variable} ${yellowtail.variable} antialiased`}>
+    <html lang="en" className={`${bricolage.variable} ${inter.variable} ${yellowtail.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"
-          className="sr-only z-[100] rounded-full bg-butter px-5 py-3 font-label font-semibold text-navy focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+          className="sr-only z-[100] rounded-full bg-butter px-5 py-3 font-semibold text-navy focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
         >
           Skip to content
         </a>

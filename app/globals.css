@@ -1,29 +1,31 @@
 @import "tailwindcss";
 
-/* Butter Batch brand tokens — sampled from the logo (royal blue #013893 is LOGO.jpg's exact background)
-   and the menu board (parchment, navy, ribbon red). */
+/* Butter Batch v2 tokens. Deep navy does the work, butter yellow is the single accent.
+   Royal blue (#013893) is LOGO.jpg's exact background and is used ONLY behind the logo (hero +
+   header) so the artwork's edges stay seamless. Red lives only inside the logo artwork. */
+/* --logo-bg starts as LOGO.jpg's background and is re-sampled at runtime from the served logo
+   image (encoders shift it by a level or two), so the logo's edges never show a seam. */
+@theme inline {
+  --color-royal: var(--logo-bg);
+}
+
 @theme {
-  --color-royal: #013893;
-  --color-royal-deep: #002670;
   --color-navy: #0b1f4d;
+  --color-navy-deep: #07163a;
   --color-butter: #ffc93c;
   --color-butter-light: #ffe38a;
-  --color-gold: #f2a900;
-  --color-ribbon: #c1272d;
-  --color-ribbon-dark: #8e1b1f;
-  --color-parchment: #fbf0d9;
-  --color-parchment-dark: #f1dcb0;
-  --color-ink: #2b1a0e;
-  --color-kernel: #fff4d6;
+  --color-cream: #fffaf0;
+  --color-ink: #0b1f4d;
 
-  --font-display: var(--font-alfa), ui-serif, Georgia, serif;
-  --font-label: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
+  /* Two typefaces: one display, one text. Yellowtail is a single small accent (the thank-you line). */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-script: var(--font-yellowtail), cursive;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
   color-scheme: light;
+  --logo-bg: #013893;
 }
 
 html {
@@ -38,7 +40,7 @@ html {
 }
 
 body {
-  background: var(--color-parchment);
+  background: var(--color-cream);
   color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -53,86 +55,5 @@ section[id] {
 :focus-visible {
   outline: 3px solid var(--color-butter);
   outline-offset: 3px;
-  border-radius: 6px;
-}
-
-/* Subtle paper grain on parchment sections (pure CSS, no image request). */
-.paper {
-  background-color: var(--color-parchment);
-  background-image:
-    radial-gradient(circle at 20% 10%, rgb(255 255 255 / 0.55), transparent 45%),
-    radial-gradient(circle at 85% 90%, rgb(241 220 176 / 0.7), transparent 50%);
-}
-
-/* Retro ribbon banner used for section + category headings. */
-.ribbon {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.45rem 1.4rem;
-  color: #fff;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%, 14px 50%);
-}
-
-/* ---- Hero: sunburst pulse (compositor-only: opacity + transform) ---- */
-@keyframes rays-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.035);
-  }
-}
-@keyframes rays-shimmer {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.85;
-  }
-}
-@keyframes hint-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.rays {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  will-change: opacity, transform;
-}
-.rays-a {
-  animation: rays-pulse 6s ease-in-out infinite;
-}
-.rays-b {
-  animation: rays-shimmer 6s ease-in-out infinite;
-  animation-delay: -3s;
-}
-.tap-hint {
-  animation: hint-in 600ms ease-out 1.6s both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rays-a,
-  .rays-b,
-  .tap-hint {
-    animation: none;
-  }
-  .rays-b {
-    opacity: 0;
-  }
+  border-radius: 8px;
 }

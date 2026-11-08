@@ -7,36 +7,27 @@ export async function Hero() {
   const flavorCount = countCurrentFlavors(menu);
 
   return (
-    <section
-      id="top"
-      aria-labelledby="hero-heading"
-      className="relative overflow-hidden bg-royal text-white"
-      style={{
-        // Solid logo blue (#013893) all around the logo so its edges are seamless; deepens only far out.
-        backgroundImage: "radial-gradient(ellipse farthest-corner at 50% 40%, #013893 68%, #002670 100%)",
-      }}
-    >
+    // Solid logo blue (#013893) so the logo artwork's edges are seamless. One focal point:
+    // logo, headline, subline, two buttons.
+    <section id="top" aria-labelledby="hero-heading" className="relative overflow-hidden bg-royal text-white">
       <HeroStage>
-        <div className="mt-1 flex max-w-xl flex-col items-center text-center">
-          <h1
-            id="hero-heading"
-            className="font-display text-[1.7rem] leading-tight text-butter sm:text-4xl"
+        <h1
+          id="hero-heading"
+          className="mt-4 max-w-xl font-display text-[2rem] leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
+        >
+          Small-batch popcorn, popped fresh in Lincoln
+        </h1>
+        <p className="mt-4 max-w-md text-lg text-white/80">
+          Real butter, kettle corn, caramel corn and {flavorCount} flavors on the menu.
+        </p>
+        <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <OrderButton />
+          <a
+            href="#menu"
+            className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/40 px-6 text-base font-semibold text-white transition-colors hover:bg-white/10"
           >
-            Small-batch popcorn, popped fresh in Lincoln, Nebraska
-          </h1>
-          <p className="mt-3 text-lg text-white/90">
-            Real butter. Kettle corn, caramel corn and {flavorCount} flavors on the menu.
-          </p>
-          <div data-keepout className="mt-6 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <OrderButton />
-            <a
-              href="#menu"
-              className="inline-flex min-h-14 items-center justify-center rounded-full border-2 border-white/80 px-7 font-label text-lg font-semibold uppercase tracking-wide text-white hover:bg-white/10"
-            >
-              See the menu
-            </a>
-          </div>
-          <p className="mt-4 text-sm text-white/80">Local pickup in Lincoln · Events &amp; game nights</p>
+            See the menu
+          </a>
         </div>
       </HeroStage>
     </section>

@@ -4,7 +4,7 @@ import { ChatIcon } from "./icons";
 type Props = {
   label?: string;
   size?: "md" | "lg";
-  variant?: "butter" | "royal";
+  variant?: "butter" | "navy";
   className?: string;
 };
 
@@ -18,19 +18,19 @@ export function OrderButton({
   variant = "butter",
   className = "",
 }: Props) {
-  const sizing = size === "lg" ? "min-h-14 px-7 text-lg" : "min-h-11 px-4 text-base";
+  const sizing = size === "lg" ? "min-h-12 px-6 text-base" : "min-h-11 px-4 text-sm";
   const colors =
     variant === "butter"
-      ? "bg-butter text-navy shadow-[0_4px_0_#b07c00] hover:bg-butter-light active:translate-y-[2px] active:shadow-[0_2px_0_#b07c00]"
-      : "bg-royal text-white shadow-[0_4px_0_#001a4d] hover:bg-royal-deep active:translate-y-[2px] active:shadow-[0_2px_0_#001a4d]";
+      ? "bg-butter text-navy hover:bg-butter-light"
+      : "bg-navy text-white hover:bg-navy-deep";
   return (
     <a
       href={ORDER_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-full font-label font-semibold uppercase tracking-wide transition-colors ${sizing} ${colors} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-colors ${sizing} ${colors} ${className}`}
     >
-      <ChatIcon className={size === "lg" ? "h-6 w-6" : "h-5 w-5"} />
+      <ChatIcon className={size === "lg" ? "h-5 w-5" : "h-4 w-4"} />
       <span>{label}</span>
       <span className="sr-only">(opens Facebook in a new tab)</span>
     </a>
