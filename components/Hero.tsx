@@ -34,7 +34,7 @@ export async function Hero() {
         <nav aria-label="Explore" className="mt-4 grid w-full max-w-md grid-cols-3 gap-2 sm:gap-3">
           <Link
             href="/shop"
-            className="inline-flex min-h-14 items-center justify-center rounded-full bg-butter px-3 text-base font-bold text-navy transition-colors hover:bg-butter-light"
+            className="inline-flex min-h-14 items-center justify-center rounded-full bg-butter px-3 text-base font-bold text-royal transition-colors hover:bg-butter-light"
           >
             Shop
           </Link>

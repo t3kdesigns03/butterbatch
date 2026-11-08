@@ -81,31 +81,31 @@ function Builder({ editing }: { editing: CustomItem | null }) {
       {/* choices */}
       <div className="space-y-8">
         <fieldset>
-          <legend className="font-display text-2xl font-bold tracking-tight text-navy">1. Pick a size</legend>
+          <legend className="font-display text-2xl font-bold tracking-tight text-butter">1. Pick a size</legend>
           <div className="mt-3 grid grid-cols-2 gap-3">
             {(["medium", "large"] as const).map((s) => (
               <label
                 key={s}
                 className={`flex min-h-16 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 px-3 py-2 text-center transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-butter ${
-                  size === s ? "border-navy bg-navy text-white" : "border-navy/15 bg-white text-navy hover:border-navy/40"
+                  size === s ? "border-butter bg-butter text-royal" : "border-white/15 surface-2 text-white hover:border-white/40"
                 }`}
               >
                 <input type="radio" name="custom-size" value={s} checked={size === s} onChange={() => setSize(s)} className="sr-only" />
                 <span className="font-semibold">{s === "medium" ? "Medium bag" : "Large bag"}</span>
-                <span className={`text-sm ${size === s ? "text-white/80" : "text-navy/65"}`}>{sizePriceLabel(s)}</span>
+                <span className={`text-sm ${size === s ? "text-royal" : "text-white/70"}`}>{sizePriceLabel(s)}</span>
               </label>
             ))}
           </div>
         </fieldset>
 
         <fieldset>
-          <legend className="font-display text-2xl font-bold tracking-tight text-navy">2. Pick a flavor (or two)</legend>
-          <p className="mt-1 text-sm text-navy/70">
+          <legend className="font-display text-2xl font-bold tracking-tight text-butter">2. Pick a flavor (or two)</legend>
+          <p className="mt-1 text-sm text-white/70">
             Max {opts.maxFlavors} flavors per bag.{full ? " Tap a picked flavor to swap it out." : ""}
           </p>
           {menu.categories.map((cat) => (
             <div key={cat.id} className="mt-4">
-              <p className="text-sm font-semibold text-navy/80">
+              <p className="text-sm font-semibold text-white/80">
                 {cat.name} · {cat.prices.map((p) => money(p.price)).join(" / ")}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -121,8 +121,8 @@ function Builder({ editing }: { editing: CustomItem | null }) {
                       onClick={() => toggle(f.id)}
                       className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors ${
                         on
-                          ? "border-navy bg-navy text-white"
-                          : "border-navy/15 bg-white text-navy hover:border-navy/40 disabled:opacity-40 disabled:hover:border-navy/15"
+                          ? "border-butter bg-butter text-royal"
+                          : "border-white/15 surface-2 text-white hover:border-white/40 disabled:opacity-40 disabled:hover:border-white/15"
                       }`}
                     >
                       <span aria-hidden="true" className="h-3 w-3 rounded-full ring-1 ring-black/10" style={{ background: LOOKS[f.look].base }} />
@@ -137,7 +137,7 @@ function Builder({ editing }: { editing: CustomItem | null }) {
         </fieldset>
 
         <fieldset>
-          <legend className="font-display text-2xl font-bold tracking-tight text-navy">3. Butter amount</legend>
+          <legend className="font-display text-2xl font-bold tracking-tight text-butter">3. Butter amount</legend>
           <input
             type="range"
             min={0}
@@ -147,39 +147,39 @@ function Builder({ editing }: { editing: CustomItem | null }) {
             onChange={(e) => setButterIdx(Number(e.target.value))}
             aria-valuetext={butter.label}
             aria-label="Butter amount"
-            className="mt-4 h-11 w-full cursor-pointer accent-[#013893]"
+            className="mt-4 h-11 w-full cursor-pointer accent-[#ffc93c]"
           />
-          <div className="mt-1 flex justify-between text-sm text-navy/70" aria-hidden="true">
+          <div className="mt-1 flex justify-between text-sm text-white/70" aria-hidden="true">
             {opts.butterLevels.map((b, i) => (
-              <span key={b.id} className={i === butterIdx ? "font-semibold text-navy" : ""}>
+              <span key={b.id} className={i === butterIdx ? "font-semibold text-white" : ""}>
                 {b.label}
               </span>
             ))}
           </div>
-          <p className="mt-1 text-xs text-navy/60">No extra charge for butter.</p>
+          <p className="mt-1 text-xs text-white/65">No extra charge for butter.</p>
         </fieldset>
 
         {opts.toppings.length > 0 && (
           <fieldset>
-            <legend className="font-display text-2xl font-bold tracking-tight text-navy">4. Toppings</legend>
+            <legend className="font-display text-2xl font-bold tracking-tight text-butter">4. Toppings</legend>
             {/* Rendered only when the menu actually offers toppings (none on the current board). */}
           </fieldset>
         )}
 
-        <div className="rounded-2xl border border-navy/10 bg-white p-5">
+        <div className="rounded-2xl border border-white/10 surface-2 p-5">
           <div className="flex items-baseline justify-between">
-            <p className="font-semibold text-navy">Your popcorn</p>
-            <p className="font-display text-3xl font-bold text-navy" aria-live="polite">
+            <p className="font-semibold text-white">Your popcorn</p>
+            <p className="font-display text-3xl font-bold text-butter" aria-live="polite">
               {price != null ? money(price) : "—"}
             </p>
           </div>
-          <p className="mt-1 text-sm text-navy/70">
+          <p className="mt-1 text-sm text-white/70">
             {picked.length === 0
               ? "Pick at least one flavor."
               : `${size === "large" ? "Large" : "Medium"} bag · ${pickedNames.join(" + ")} · ${butter.label}`}
           </p>
           {crossTierMix && (
-            <p className="mt-2 text-xs text-navy/65">
+            <p className="mt-2 text-xs text-white/65">
               Flavors from different price tiers are priced at the higher menu price. We&rsquo;ll confirm in Messenger.
             </p>
           )}
@@ -187,11 +187,11 @@ function Builder({ editing }: { editing: CustomItem | null }) {
             type="button"
             disabled={price == null}
             onClick={submit}
-            className="mt-4 min-h-12 w-full rounded-full bg-butter px-6 font-semibold text-navy transition-colors hover:bg-butter-light disabled:bg-navy/10 disabled:text-navy/50"
+            className="mt-4 min-h-12 w-full rounded-full bg-butter px-6 font-semibold text-royal transition-colors hover:bg-butter-light disabled:bg-white/10 disabled:text-white/65"
           >
             {editing ? "Update My Popcorn" : added ? "Added ✓ — add another?" : "Add My Popcorn to Cart"}
           </button>
-          <p className="mt-3 text-center text-sm text-navy/70">
+          <p className="mt-3 text-center text-sm text-white/70">
             Prefer a classic bag?{" "}
             <Link href="/shop" className="font-semibold underline underline-offset-4">
               Shop flavors

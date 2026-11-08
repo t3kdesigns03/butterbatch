@@ -4,7 +4,7 @@ import { ChatIcon } from "./icons";
 type Props = {
   label?: string;
   size?: "md" | "lg";
-  variant?: "butter" | "navy";
+  variant?: "butter" | "royal";
   className?: string;
 };
 
@@ -21,8 +21,8 @@ export function OrderButton({
   const sizing = size === "lg" ? "min-h-12 px-6 text-base" : "min-h-11 px-4 text-sm";
   const colors =
     variant === "butter"
-      ? "bg-butter text-navy hover:bg-butter-light"
-      : "bg-navy text-white hover:bg-navy-deep";
+      ? "bg-butter text-royal hover:bg-butter-light"
+      : "bg-royal text-white ring-1 ring-white/30 hover:bg-royal/80";
   return (
     <a
       href={ORDER_URL}

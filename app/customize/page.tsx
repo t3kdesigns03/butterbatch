@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function CustomizePage() {
   return (
-    <main id="main" className="flex-1 bg-cream">
+    <main id="main" className="flex-1 surface-0">
       <div className="bg-royal py-10 text-white sm:py-14">
         <div className="mx-auto max-w-6xl px-4">
           <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">Build My Popcorn</h1>
@@ -20,7 +20,7 @@ export default function CustomizePage() {
         </div>
       </div>
       <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-        <Suspense fallback={<p className="text-navy/70">Loading the popcorn builder…</p>}>
+        <Suspense fallback={<p className="text-white/70">Loading the popcorn builder…</p>}>
           <Customizer />
         </Suspense>
       </div>

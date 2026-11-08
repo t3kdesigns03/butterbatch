@@ -58,23 +58,23 @@ export function CartDrawer() {
     >
       <div
         onClick={close}
-        className={`absolute inset-0 bg-navy-deep/50 transition-opacity duration-200 motion-reduce:transition-none ${isOpen ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 bg-black/60 transition-opacity duration-200 motion-reduce:transition-none ${isOpen ? "opacity-100" : "opacity-0"}`}
       />
       <aside
         role="dialog"
         aria-modal="true"
         aria-labelledby="cart-title"
-        className={`absolute top-0 right-0 flex h-full w-full max-w-md flex-col bg-white text-navy shadow-2xl transition-transform duration-200 motion-reduce:transition-none ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`absolute top-0 right-0 flex h-full w-full max-w-md flex-col surface-2 text-white shadow-2xl transition-transform duration-200 motion-reduce:transition-none ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="flex items-center justify-between border-b border-navy/10 px-5 py-4">
-          <h2 id="cart-title" className="font-display text-2xl font-bold tracking-tight">
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <h2 id="cart-title" className="font-display text-2xl font-bold tracking-tight text-butter">
             Your cart
           </h2>
           <button
             ref={closeRef}
             type="button"
             onClick={close}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-navy/5"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-white/5"
           >
             <span className="sr-only">Close cart</span>
             <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -85,19 +85,19 @@ export function CartDrawer() {
 
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-            <p className="text-lg text-navy/75">Your cart is empty.</p>
+            <p className="text-lg text-white/75">Your cart is empty.</p>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Link href="/shop" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full bg-butter px-6 font-semibold text-navy hover:bg-butter-light">
+              <Link href="/shop" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full bg-butter px-6 font-semibold text-royal hover:bg-butter-light">
                 Shop flavors
               </Link>
-              <Link href="/customize" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full border border-navy/20 px-6 font-semibold text-navy hover:bg-navy/5">
+              <Link href="/customize" onClick={close} className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 px-6 font-semibold text-white hover:bg-white/5">
                 Build my popcorn
               </Link>
             </div>
           </div>
         ) : (
           <>
-            <ul className="flex-1 divide-y divide-navy/10 overflow-y-auto px-5">
+            <ul className="flex-1 divide-y divide-white/10 overflow-y-auto px-5">
               {items.map((item) => {
                 const d = describe(menu, item);
                 const unit = unitPrice(menu, item) ?? 0;
@@ -106,20 +106,20 @@ export function CartDrawer() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-semibold">{d.title}</p>
-                        <ul className="mt-0.5 text-sm text-navy/70">
+                        <ul className="mt-0.5 text-sm text-white/70">
                           {d.details.map((x) => (
                             <li key={x}>{x}</li>
                           ))}
                         </ul>
                       </div>
-                      <p className="font-display text-lg font-bold">{money(unit * item.qty)}</p>
+                      <p className="font-display text-lg font-bold text-butter">{money(unit * item.qty)}</p>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <div className="inline-flex items-center rounded-full border border-navy/15">
+                      <div className="inline-flex items-center rounded-full border border-white/15">
                         <button
                           type="button"
                           onClick={() => (item.qty > 1 ? update(item.id, { qty: item.qty - 1 }) : remove(item.id))}
-                          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-xl hover:bg-navy/5"
+                          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-xl hover:bg-white/5"
                         >
                           <span aria-hidden="true">−</span>
                           <span className="sr-only">Decrease quantity of {d.title}</span>
@@ -131,7 +131,7 @@ export function CartDrawer() {
                           type="button"
                           disabled={item.qty >= MAX_QTY}
                           onClick={() => update(item.id, { qty: item.qty + 1 })}
-                          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-xl hover:bg-navy/5 disabled:opacity-40"
+                          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-xl hover:bg-white/5 disabled:opacity-40"
                         >
                           <span aria-hidden="true">+</span>
                           <span className="sr-only">Increase quantity of {d.title}</span>
@@ -143,7 +143,7 @@ export function CartDrawer() {
                           <select
                             value={item.size}
                             onChange={(e) => update(item.id, { size: e.target.value as "medium" | "large" })}
-                            className="min-h-11 rounded-full border border-navy/15 bg-white px-3"
+                            className="min-h-11 rounded-full border border-white/15 surface-2 px-3"
                           >
                             <option value="medium">Medium</option>
                             <option value="large">Large</option>
@@ -162,7 +162,7 @@ export function CartDrawer() {
                       <button
                         type="button"
                         onClick={() => remove(item.id)}
-                        className="ml-auto inline-flex min-h-11 items-center rounded-full px-3 text-sm text-navy/70 underline underline-offset-4 hover:text-navy"
+                        className="ml-auto inline-flex min-h-11 items-center rounded-full px-3 text-sm text-white/70 underline underline-offset-4 hover:text-white"
                       >
                         Remove<span className="sr-only"> {d.title}</span>
                       </button>
@@ -172,23 +172,23 @@ export function CartDrawer() {
               })}
             </ul>
 
-            <div className="border-t border-navy/10 px-5 py-4">
+            <div className="border-t border-white/10 px-5 py-4">
               <div className="flex items-baseline justify-between">
                 <p className="font-semibold">Estimated total</p>
-                <p className="font-display text-2xl font-bold">{money(total)}</p>
+                <p className="font-display text-2xl font-bold text-butter">{money(total)}</p>
               </div>
-              <p className="mt-1 text-xs text-navy/65">{menu.priceNote} No payment is taken on this site.</p>
+              <p className="mt-1 text-xs text-white/65">{menu.priceNote} No payment is taken on this site.</p>
               <a
                 href={ORDER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onSend}
-                className="mt-4 flex min-h-12 w-full items-center justify-center rounded-full bg-butter px-6 font-semibold text-navy hover:bg-butter-light"
+                className="mt-4 flex min-h-12 w-full items-center justify-center rounded-full bg-butter px-6 font-semibold text-royal hover:bg-butter-light"
               >
                 Copy order &amp; message us
                 <span className="sr-only">(opens Facebook in a new tab)</span>
               </a>
-              <p className="mt-2 text-center text-xs text-navy/65" aria-live="polite">
+              <p className="mt-2 text-center text-xs text-white/65" aria-live="polite">
                 {copyState === "copied"
                   ? "Order copied! Tap Message on our Facebook page and paste it in."
                   : copyState === "manual"
@@ -203,11 +203,11 @@ export function CartDrawer() {
                   value={message}
                   onFocus={(e) => e.currentTarget.select()}
                   rows={8}
-                  className="mt-1 w-full rounded-xl border border-navy/15 p-3 font-mono text-xs"
+                  className="mt-1 w-full rounded-xl border border-white/15 p-3 font-mono text-xs"
                   aria-label="Order message"
                 />
               </details>
-              <button type="button" onClick={clear} className="mt-2 min-h-11 text-sm text-navy/60 underline underline-offset-4">
+              <button type="button" onClick={clear} className="mt-2 min-h-11 text-sm text-white/65 underline underline-offset-4">
                 Empty cart
               </button>
             </div>

@@ -4,9 +4,9 @@ import { ExternalIcon, PinIcon } from "./icons";
 
 export function Locations() {
   return (
-    <section id="pickup" aria-labelledby="pickup-heading" className="bg-navy py-16 text-white sm:py-24">
+    <section id="pickup" aria-labelledby="pickup-heading" className="surface-1 py-16 text-white sm:py-24">
       <div className="mx-auto max-w-5xl px-4">
-        <h2 id="pickup-heading" className="text-center font-display text-4xl font-bold tracking-tight sm:text-5xl">
+        <h2 id="pickup-heading" className="text-center font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
           Pickup spots
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-center text-lg text-white/75">
@@ -14,12 +14,12 @@ export function Locations() {
         </p>
         <ul className="mt-10 grid gap-4 sm:grid-cols-2">
           {pickupLocations.map((loc) => (
-            <li key={loc.id} className="flex flex-col rounded-2xl bg-white p-6 text-navy">
+            <li key={loc.id} className="flex flex-col rounded-2xl surface-2 p-6 text-white">
               <div className="flex items-start gap-3">
-                <PinIcon className="mt-1 h-6 w-6 shrink-0 text-navy/40" />
+                <PinIcon className="mt-1 h-6 w-6 shrink-0 text-white/40" />
                 <div>
                   <h3 className="font-display text-xl font-bold tracking-tight">{loc.name}</h3>
-                  <address className="mt-1 text-base not-italic text-navy/75">
+                  <address className="mt-1 text-base not-italic text-white/75">
                     {loc.street}
                     <br />
                     {loc.cityLine}
@@ -30,7 +30,7 @@ export function Locations() {
                 href={mapsUrl(loc)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-full border border-navy/20 px-5 text-sm font-semibold text-navy transition-colors hover:bg-navy/5"
+                className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-full border border-white/20 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/5"
               >
                 Get directions
                 <ExternalIcon />

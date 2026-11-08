@@ -84,7 +84,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"
-          className="sr-only z-[100] rounded-full bg-butter px-5 py-3 font-semibold text-navy focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+          className="sr-only z-[100] rounded-full bg-butter px-5 py-3 font-semibold text-royal focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
         >
           Skip to content
         </a>
