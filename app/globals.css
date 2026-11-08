@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* Butter Batch brand tokens — sampled from the logo (royal blue #013893 is LOGO.jpg's exact background)
+   and the menu board (parchment, navy, ribbon red). */
+@theme {
+  --color-royal: #013893;
+  --color-royal-deep: #002670;
+  --color-navy: #0b1f4d;
+  --color-butter: #ffc93c;
+  --color-butter-light: #ffe38a;
+  --color-gold: #f2a900;
+  --color-ribbon: #c1272d;
+  --color-ribbon-dark: #8e1b1f;
+  --color-parchment: #fbf0d9;
+  --color-parchment-dark: #f1dcb0;
+  --color-ink: #2b1a0e;
+  --color-kernel: #fff4d6;
+
+  --font-display: var(--font-alfa), ui-serif, Georgia, serif;
+  --font-label: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-yellowtail), cursive;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Anchor targets clear the sticky header. */
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+/* Visible focus for keyboard users everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-butter);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Subtle paper grain on parchment sections (pure CSS, no image request). */
+.paper {
+  background-color: var(--color-parchment);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgb(255 255 255 / 0.55), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgb(241 220 176 / 0.7), transparent 50%);
+}
+
+/* Retro ribbon banner used for section + category headings. */
+.ribbon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 1.4rem;
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%, 14px 50%);
+}
+
+/* ---- Hero: sunburst pulse (compositor-only: opacity + transform) ---- */
+@keyframes rays-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.035);
+  }
+}
+@keyframes rays-shimmer {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+@keyframes hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rays {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.rays-a {
+  animation: rays-pulse 6s ease-in-out infinite;
+}
+.rays-b {
+  animation: rays-shimmer 6s ease-in-out infinite;
+  animation-delay: -3s;
+}
+.tap-hint {
+  animation: hint-in 600ms ease-out 1.6s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rays-a,
+  .rays-b,
+  .tap-hint {
+    animation: none;
+  }
+  .rays-b {
+    opacity: 0;
+  }
+}
