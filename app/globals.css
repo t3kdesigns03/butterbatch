@@ -1,21 +1,19 @@
 @import "tailwindcss";
 
-/* Butter Batch v2 tokens. Deep navy does the work, butter yellow is the single accent.
-   Royal blue (#013893) is LOGO.jpg's exact background and is used ONLY behind the logo (hero +
-   header) so the artwork's edges stay seamless. Red lives only inside the logo artwork. */
-/* --logo-bg starts as LOGO.jpg's background and is re-sampled at runtime from the served logo
-   image (encoders shift it by a level or two), so the logo's edges never show a seam. */
+/* Butter Batch V4 — dark theme on ONE blue.
+   - Royal blue = LOGO.jpg's background (#013893). It is a runtime variable (--logo-bg): the hero
+     re-samples it from the served logo image (encoders shift it by a level or two) so the logo's
+     edges never show a seam. Header, hero and footer all use it, so they are always identical.
+   - Every dark surface is that SAME blue with black laid over it at a fixed opacity (surface-0..3).
+     No other blue/navy hue exists in the theme.
+   - Yellow is the single accent. Red lives only inside the logo artwork. */
 @theme inline {
   --color-royal: var(--logo-bg);
 }
 
 @theme {
-  --color-navy: #0b1f4d;
-  --color-navy-deep: #07163a;
   --color-butter: #ffc93c;
   --color-butter-light: #ffe38a;
-  --color-cream: #fffaf0;
-  --color-ink: #0b1f4d;
 
   /* Two typefaces: one display, one text. Yellowtail is a single small accent (the thank-you line). */
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
@@ -24,8 +22,26 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --logo-bg: #013893;
+}
+
+/* Dark surfaces: royal blue + a black overlay. Higher number = lighter (less black). */
+@utility surface-0 {
+  background-color: var(--logo-bg);
+  background-image: linear-gradient(rgb(0 0 0 / 0.62), rgb(0 0 0 / 0.62));
+}
+@utility surface-1 {
+  background-color: var(--logo-bg);
+  background-image: linear-gradient(rgb(0 0 0 / 0.52), rgb(0 0 0 / 0.52));
+}
+@utility surface-2 {
+  background-color: var(--logo-bg);
+  background-image: linear-gradient(rgb(0 0 0 / 0.38), rgb(0 0 0 / 0.38));
+}
+@utility surface-3 {
+  background-color: var(--logo-bg);
+  background-image: linear-gradient(rgb(0 0 0 / 0.24), rgb(0 0 0 / 0.24));
 }
 
 html {
@@ -40,8 +56,10 @@ html {
 }
 
 body {
-  background: var(--color-cream);
-  color: var(--color-ink);
+  /* surface-0 for the whole page, so nothing below the hero can ever fall back to white */
+  background-color: var(--logo-bg);
+  background-image: linear-gradient(rgb(0 0 0 / 0.62), rgb(0 0 0 / 0.62));
+  color: #fff;
   font-family: var(--font-sans);
   overflow-x: hidden;
 }

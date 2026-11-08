@@ -10,9 +10,9 @@ import { LOOKS, seeded } from "@/lib/looks";
 export function BagArt({ flavor, sizes = "(min-width: 1024px) 240px, 45vw" }: { flavor: Flavor; sizes?: string }) {
   if (flavor.photo) {
     return (
-      <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-navy/5">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-white/5">
         <Image src={flavor.photo.src} alt={flavor.photo.alt} fill sizes={sizes} className="object-cover" />
-        <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-navy">
+        <span className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white">
           Real photo
         </span>
       </div>
@@ -32,7 +32,7 @@ export function BagRender({ look, label, seedKey }: { look: Look; label: string;
   }));
   const clip = `bag-${seedKey}`;
   return (
-    <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-cream" role="img" aria-label={`Illustration of a bag of ${label} popcorn with the Butter Batch logo sticker`}>
+    <div className="relative aspect-[3/4] overflow-hidden rounded-xl surface-0" role="img" aria-label={`Illustration of a bag of ${label} popcorn with the Butter Batch logo sticker`}>
       <svg viewBox="0 0 120 160" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
           <clipPath id={clip}>
@@ -46,8 +46,8 @@ export function BagRender({ look, label, seedKey }: { look: Look; label: string;
           </linearGradient>
         </defs>
         {/* zip top */}
-        <rect x="12" y="8" width="96" height="10" rx="2" fill="#ffffff" stroke="#0b1f4d" strokeOpacity="0.12" />
-        <rect x="12" y="15" width="96" height="2" fill="#0b1f4d" fillOpacity="0.1" />
+        <rect x="12" y="8" width="96" height="10" rx="2" fill="#ffffff" stroke="#000" strokeOpacity="0.15" />
+        <rect x="12" y="15" width="96" height="2" fill="#000" fillOpacity="0.12" />
         <g clipPath={`url(#${clip})`}>
           <rect x="0" y="0" width="120" height="160" fill={c.base} />
           {puffs.map((p, i) => (
@@ -63,7 +63,7 @@ export function BagRender({ look, label, seedKey }: { look: Look; label: string;
         <path
           d="M14 18 H106 Q110 18 110 24 L112 150 Q112 156 106 156 H14 Q8 156 8 150 L10 24 Q10 18 14 18 Z"
           fill="none"
-          stroke="#0b1f4d"
+          stroke="#000"
           strokeOpacity="0.15"
         />
       </svg>
@@ -79,10 +79,10 @@ export function BagRender({ look, label, seedKey }: { look: Look; label: string;
         />
       </div>
       {/* flavor sticker, like the round labels on the real bags */}
-      <span className="absolute top-[16%] right-[9%] max-w-[46%] rounded-full bg-white px-2 py-1 text-center text-[10px] leading-tight font-semibold text-navy shadow-sm">
+      <span className="absolute top-[16%] right-[9%] max-w-[46%] rounded-full surface-2 px-2 py-1 text-center text-[10px] leading-tight font-semibold text-white shadow-sm">
         {label}
       </span>
-      <span className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-navy/70">
+      <span className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white/70">
         Illustration
       </span>
     </div>

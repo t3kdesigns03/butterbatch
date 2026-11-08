@@ -152,8 +152,8 @@ export function Bucket({ looks, size, butter }: Props) {
           <stop offset="0.75" stopColor="#000" stopOpacity="0" />
           <stop offset="1" stopColor="#000" stopOpacity="0.2" />
         </linearGradient>
-        <path d="M8 47 L92 47 L82 110 L18 110 Z" fill="none" stroke="#0b1f4d" strokeOpacity="0.25" strokeWidth="0.6" />
-        <rect x="6" y="44" width="88" height="5" rx="2.5" fill="#ffc93c" stroke="#0b1f4d" strokeOpacity="0.2" strokeWidth="0.5" />
+        <path d="M8 47 L92 47 L82 110 L18 110 Z" fill="none" stroke="#000" strokeOpacity="0.3" strokeWidth="0.6" />
+        <rect x="6" y="44" width="88" height="5" rx="2.5" fill="#ffc93c" stroke="#000" strokeOpacity="0.25" strokeWidth="0.5" />
       </svg>
       {/* REAL logo file as the bucket label — unmodified, square corners */}
       <div className="absolute top-[53%] left-1/2 w-[50%] -translate-x-1/2 bg-white p-[3px] shadow-md">

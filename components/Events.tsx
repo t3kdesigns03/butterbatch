@@ -9,13 +9,13 @@ export async function Events() {
   const bundles = menu.bundles.filter((b) => b.showOnSite);
 
   return (
-    <section id="events" aria-labelledby="events-heading" className="bg-cream py-16 sm:py-24">
+    <section id="events" aria-labelledby="events-heading" className="surface-0 py-16 sm:py-24">
       <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 lg:grid-cols-2">
         <div>
-          <h2 id="events-heading" className="font-display text-4xl font-bold tracking-tight text-navy sm:text-5xl">
+          <h2 id="events-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
             Events &amp; game nights
           </h2>
-          <p className="mt-4 text-lg text-navy/80">
+          <p className="mt-4 text-lg text-white/80">
             Party, fundraiser, office treat or game night? We pop for events around Lincoln. Tell us the date, how
             many people and your favorite flavors, and we&rsquo;ll put together a batch.
           </p>
@@ -23,18 +23,18 @@ export async function Events() {
           {bundles.map((b) => (
             <div
               key={b.id}
-              className="mt-6 flex items-center justify-between gap-4 rounded-2xl border border-navy/10 bg-white p-5"
+              className="mt-6 flex items-center justify-between gap-4 rounded-2xl border border-white/10 surface-2 p-5"
             >
               <div>
-                <p className="font-display text-xl font-bold tracking-tight text-navy">{b.name}</p>
-                <p className="text-navy/70">{b.description}</p>
+                <p className="font-display text-xl font-bold tracking-tight text-white">{b.name}</p>
+                <p className="text-white/70">{b.description}</p>
               </div>
-              <p className="font-display text-3xl font-bold text-navy">{formatPrice(b.price)}</p>
+              <p className="font-display text-3xl font-bold text-butter">{formatPrice(b.price)}</p>
             </div>
           ))}
 
-          <h3 className="mt-8 font-display text-xl font-bold tracking-tight text-navy">Where to find us next</h3>
-          <p className="mt-2 text-lg text-navy/80">
+          <h3 className="mt-8 font-display text-xl font-bold tracking-tight text-white">Where to find us next</h3>
+          <p className="mt-2 text-lg text-white/80">
             Pop-ups and event dates are posted on our Facebook page first, so follow along there.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -43,7 +43,7 @@ export async function Events() {
               href={FACEBOOK_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-navy/20 px-6 text-base font-semibold text-navy transition-colors hover:bg-navy/5"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 px-6 text-base font-semibold text-white transition-colors hover:bg-white/5"
             >
               Follow on Facebook
               <ExternalIcon />
@@ -62,7 +62,7 @@ export async function Events() {
               className="object-cover object-[50%_30%]"
             />
           </div>
-          <figcaption className="mt-2 text-sm text-navy/70">
+          <figcaption className="mt-2 text-sm text-white/70">
             A table of fresh Butter Batch bags, labeled and ready to go. Photo: Butter Batch Popcorn Co.
           </figcaption>
         </figure>

@@ -11,9 +11,9 @@ async function copyrightYear() {
 export async function Footer() {
   const year = await copyrightYear();
   return (
-    <footer className="bg-navy-deep text-white">
+    <footer className="bg-royal text-white">
       <div className="mx-auto max-w-5xl px-4 py-14 text-center">
-        <p className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Message us to order</p>
+        <p className="font-display text-3xl font-bold tracking-tight text-butter sm:text-4xl">Message us to order</p>
         <p className="mx-auto mt-2 max-w-md text-lg text-white/75">
           Send us your flavors and sizes on Facebook Messenger and we&rsquo;ll confirm pickup.
         </p>

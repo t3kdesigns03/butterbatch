@@ -75,7 +75,7 @@ export function Header() {
               setOpen(false);
               cart.open();
             }}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-butter px-4 text-sm font-semibold whitespace-nowrap text-navy transition-colors hover:bg-butter-light"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-butter px-4 text-sm font-semibold whitespace-nowrap text-royal transition-colors hover:bg-butter-light"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6.2" />
@@ -84,7 +84,7 @@ export function Header() {
             </svg>
             Cart
             <span
-              className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs ${cart.count ? "bg-navy text-white" : "bg-navy/10 text-navy"}`}
+              className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs ${cart.count ? "bg-royal text-white" : "bg-royal/15 text-royal"}`}
             >
               {cart.count}
             </span>
@@ -109,7 +109,7 @@ export function Header() {
       {/* Slide-down panel (phones/tablets). grid-rows trick animates height without measuring. */}
       <div
         id="mobile-nav"
-        className={`grid border-white/10 bg-navy transition-[grid-template-rows] duration-200 motion-reduce:transition-none lg:hidden ${
+        className={`grid border-white/10 surface-1 transition-[grid-template-rows] duration-200 motion-reduce:transition-none lg:hidden ${
           open ? "grid-rows-[1fr] border-t" : "grid-rows-[0fr]"
         }`}
         inert={!open}

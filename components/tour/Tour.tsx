@@ -37,15 +37,15 @@ export function Tour() {
   return (
     <section aria-roledescription="carousel" aria-label="Butter Batch tour" className="mx-auto max-w-5xl">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-medium text-navy/70" aria-live="polite">
-          Stop {index + 1} of {tourStops.length}: <span className="text-navy">{tourStops[index]?.title}</span>
+        <p className="text-sm font-medium text-white/70" aria-live="polite">
+          Stop {index + 1} of {tourStops.length}: <span className="text-white">{tourStops[index]?.title}</span>
         </p>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => go(index - 1)}
             disabled={index === 0}
-            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-navy/20 bg-white text-navy hover:bg-navy/5 disabled:opacity-40"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 surface-2 text-white hover:bg-white/5 disabled:opacity-40"
           >
             <span className="sr-only">Previous stop</span>
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -56,7 +56,7 @@ export function Tour() {
             type="button"
             onClick={() => go(index + 1)}
             disabled={index === last}
-            className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-navy text-white hover:bg-navy-deep disabled:opacity-40"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-butter text-royal hover:bg-butter-light disabled:opacity-40"
           >
             <span className="sr-only">Next stop</span>
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -91,8 +91,8 @@ export function Tour() {
             aria-label={`${i + 1} of ${tourStops.length}: ${stop.title}`}
             className="relative w-full shrink-0 snap-start snap-always"
           >
-            <div className="grid gap-0 overflow-hidden rounded-3xl bg-white md:grid-cols-[1.2fr_1fr]">
-              <figure className="relative flex h-[52vh] max-h-[520px] min-h-[280px] items-center justify-center bg-navy">
+            <div className="grid gap-0 overflow-hidden rounded-3xl surface-2 md:grid-cols-[1.2fr_1fr]">
+              <figure className="relative flex h-[52vh] max-h-[520px] min-h-[280px] items-center justify-center bg-black/40">
                 <Image
                   src={stop.photo.src}
                   alt={stop.photo.alt}
@@ -101,24 +101,24 @@ export function Tour() {
                   className="object-contain"
                   loading={i === 0 ? "eager" : "lazy"}
                 />
-                <figcaption className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-navy">
+                <figcaption className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white">
                   Photo: Butter Batch Popcorn Co.
                 </figcaption>
               </figure>
               <div className="flex flex-col p-5 sm:p-7">
-                <h2 className="font-display text-3xl font-bold tracking-tight text-navy">{stop.title}</h2>
-                <p className="mt-2 text-lg text-navy/80">{stop.caption}</p>
-                {stop.pictured && <p className="mt-1 text-sm text-navy/60">{stop.pictured}</p>}
+                <h2 className="font-display text-3xl font-bold tracking-tight text-butter">{stop.title}</h2>
+                <p className="mt-2 text-lg text-white/80">{stop.caption}</p>
+                {stop.pictured && <p className="mt-1 text-sm text-white/65">{stop.pictured}</p>}
 
                 {stop.id === "pickup" && (
                   <ul className="mt-4 space-y-3">
                     {pickupLocations.map((loc) => (
-                      <li key={loc.id} className="rounded-2xl border border-navy/10 p-4">
+                      <li key={loc.id} className="rounded-2xl border border-white/10 p-4">
                         <div className="flex items-start gap-2">
-                          <PinIcon className="mt-0.5 h-5 w-5 shrink-0 text-navy/40" />
+                          <PinIcon className="mt-0.5 h-5 w-5 shrink-0 text-white/40" />
                           <div>
-                            <p className="font-semibold text-navy">{loc.name}</p>
-                            <address className="text-sm not-italic text-navy/75">
+                            <p className="font-semibold text-white">{loc.name}</p>
+                            <address className="text-sm not-italic text-white/75">
                               {loc.street}, {loc.cityLine}
                             </address>
                           </div>
@@ -127,7 +127,7 @@ export function Tour() {
                           href={mapsUrl(loc)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-navy/20 px-4 text-sm font-semibold text-navy hover:bg-navy/5"
+                          className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-sm font-semibold text-white hover:bg-white/5"
                         >
                           Get directions <ExternalIcon />
                           <span className="sr-only">to {loc.name} (opens Google Maps in a new tab)</span>
@@ -140,23 +140,23 @@ export function Tour() {
                 {stop.id === "events" && (
                   <div className="mt-4 space-y-3">
                     {bundle && (
-                      <div className="flex items-center justify-between rounded-2xl border border-navy/10 p-4">
+                      <div className="flex items-center justify-between rounded-2xl border border-white/10 p-4">
                         <div>
-                          <p className="font-semibold text-navy">{bundle.name}</p>
-                          <p className="text-sm text-navy/70">{bundle.description}</p>
+                          <p className="font-semibold text-white">{bundle.name}</p>
+                          <p className="text-sm text-white/70">{bundle.description}</p>
                         </div>
-                        <p className="font-display text-2xl font-bold text-navy">{money(bundle.price)}</p>
+                        <p className="font-display text-2xl font-bold text-butter">{money(bundle.price)}</p>
                       </div>
                     )}
                     <div className="flex flex-wrap gap-2">
-                      <Link href="/shop" className="inline-flex min-h-11 items-center rounded-full bg-butter px-5 text-sm font-semibold text-navy hover:bg-butter-light">
+                      <Link href="/shop" className="inline-flex min-h-11 items-center rounded-full bg-butter px-5 text-sm font-semibold text-royal hover:bg-butter-light">
                         Shop the bundle
                       </Link>
                       <a
                         href={FACEBOOK_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-navy/20 px-5 text-sm font-semibold text-navy hover:bg-navy/5"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-5 text-sm font-semibold text-white hover:bg-white/5"
                       >
                         Follow on Facebook <ExternalIcon />
                         <span className="sr-only">(opens in a new tab)</span>
@@ -180,7 +180,7 @@ export function Tour() {
             className="inline-flex h-11 w-11 items-center justify-center rounded-full"
           >
             <span className="sr-only">Go to stop {i + 1}: {stop.title}</span>
-            <span aria-hidden="true" className={`block h-2.5 rounded-full transition-all ${i === index ? "w-6 bg-navy" : "w-2.5 bg-navy/25"}`} />
+            <span aria-hidden="true" className={`block h-2.5 rounded-full transition-all ${i === index ? "w-6 bg-butter" : "w-2.5 bg-white/30"}`} />
           </button>
         ))}
       </div>
