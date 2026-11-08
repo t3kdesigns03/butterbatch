@@ -17,14 +17,6 @@ export function PinIcon({ className = "h-5 w-5" }: IconProps) {
   );
 }
 
-export function StarIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false" fill="currentColor">
-      <path d="m12 2.5 2.9 6.06 6.6.8-4.87 4.56 1.25 6.58L12 17.27 6.12 20.5l1.25-6.58L2.5 9.36l6.6-.8L12 2.5Z" />
-    </svg>
-  );
-}
-
 export function ExternalIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

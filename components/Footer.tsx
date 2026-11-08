@@ -11,31 +11,31 @@ async function copyrightYear() {
 export async function Footer() {
   const year = await copyrightYear();
   return (
-    <footer className="bg-royal-deep text-white">
-      <div className="mx-auto max-w-5xl px-4 py-12 text-center">
-        <p className="font-display text-3xl text-butter sm:text-4xl">Message us to order</p>
-        <p className="mx-auto mt-2 max-w-md text-lg text-white/90">
+    <footer className="bg-navy-deep text-white">
+      <div className="mx-auto max-w-5xl px-4 py-14 text-center">
+        <p className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Message us to order</p>
+        <p className="mx-auto mt-2 max-w-md text-lg text-white/75">
           Send us your flavors and sizes on Facebook Messenger and we&rsquo;ll confirm pickup.
         </p>
         <div className="mt-6 flex justify-center">
           <OrderButton />
         </div>
 
-        <div className="mt-10 grid gap-6 border-t border-white/15 pt-8 text-left sm:grid-cols-3">
+        <div className="mt-12 grid gap-6 border-t border-white/10 pt-8 text-left sm:grid-cols-3">
           <div>
-            <p className="font-label text-lg font-semibold uppercase tracking-wide text-butter">{site.name}</p>
-            <p className="mt-1 text-white/85">Lincoln, Nebraska</p>
+            <p className="text-sm font-semibold tracking-wide text-butter uppercase">{site.name}</p>
+            <p className="mt-1 text-white/75">Lincoln, Nebraska</p>
           </div>
           <div>
-            <p className="font-label text-lg font-semibold uppercase tracking-wide text-butter">Pickup</p>
-            <ul className="mt-1 space-y-1 text-white/85">
+            <p className="text-sm font-semibold tracking-wide text-butter uppercase">Pickup</p>
+            <ul className="mt-1 space-y-1 text-white/75">
               {pickupLocations.map((l) => (
                 <li key={l.id}>{l.name}</li>
               ))}
             </ul>
           </div>
           <div>
-            <p className="font-label text-lg font-semibold uppercase tracking-wide text-butter">Follow along</p>
+            <p className="text-sm font-semibold tracking-wide text-butter uppercase">Follow along</p>
             <a
               href={FACEBOOK_URL}
               target="_blank"
@@ -49,11 +49,15 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-white/15 pt-6 text-sm text-white/75 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-sm text-white/60 sm:flex-row">
+          {/* site.name already ends in "Co." — no extra period. */}
           <p>
-            &copy; {year} {site.name}. Prices may change.
+            &copy; {year} {site.name} Prices may change.
           </p>
-          <Link href="/privacy" className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 underline underline-offset-4 hover:text-white">
+          <Link
+            href="/privacy"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 underline underline-offset-4 hover:text-white"
+          >
             Privacy
           </Link>
         </div>
