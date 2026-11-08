@@ -5,7 +5,8 @@
  * cheddar (orange with powder speckle). Pre-rendered once per size; drawing is just drawImage.
  */
 
-export type Flavor = "butter" | "kettle" | "caramel" | "cheddar";
+export type Flavor = "butter" | "kettle" | "caramel" | "cheddar" | "apple";
+/** The four looks the hero intro/bursts cycle through. "apple" is used by the Customize bucket. */
 export const FLAVORS: Flavor[] = ["butter", "kettle", "caramel", "cheddar"];
 
 const PALETTE: Record<Flavor, { hi: string; mid: string; shade: string; crease: string; shadow: string }> = {
@@ -13,6 +14,7 @@ const PALETTE: Record<Flavor, { hi: string; mid: string; shade: string; crease: 
   kettle: { hi: "#fffbea", mid: "#fbe3a0", shade: "#d9a03c", crease: "rgba(150,95,20,0.45)", shadow: "rgba(90,55,10,0.42)" },
   caramel: { hi: "#ffd98a", mid: "#d9862a", shade: "#9a4f12", crease: "rgba(90,40,5,0.55)", shadow: "rgba(60,25,0,0.5)" },
   cheddar: { hi: "#ffd68a", mid: "#ffa526", shade: "#d46a0c", crease: "rgba(150,60,0,0.5)", shadow: "rgba(100,40,0,0.45)" },
+  apple: { hi: "#f4ffd2", mid: "#b5dc55", shade: "#6c9a1f", crease: "rgba(60,90,10,0.45)", shadow: "rgba(40,60,5,0.45)" },
 };
 
 type Lobe = { x: number; y: number; r: number; sq: number; rot: number };
@@ -33,7 +35,14 @@ function prng(seed: number) {
  * A popped kernel: one merged, ruffled body of uneven lobes with folds, lit from the upper left.
  * @param vivid true = full-strength glossy "crave" look (intro + bursts); false = soft (ambient).
  */
-export function makePuffSprite(px: number, flavor: Flavor, variant: number, vivid = true): HTMLCanvasElement {
+export function makePuffSprite(
+  px: number,
+  flavor: Flavor,
+  variant: number,
+  vivid = true,
+  /** Butter glaze over any flavor: 0 = none (default), 1 = regular, 2 = extra. */
+  butter = 0,
+): HTMLCanvasElement {
   const c = document.createElement("canvas");
   c.width = c.height = px;
   const g = c.getContext("2d")!;
@@ -105,6 +114,14 @@ export function makePuffSprite(px: number, flavor: Flavor, variant: number, vivi
   } else if (flavor === "kettle") {
     g.fillStyle = "rgba(255,255,255,0.95)";
     for (let i = 0; i < 10; i++) g.fillRect((rnd() - 0.5) * u, (rnd() - 0.5) * u * 0.9, u * 0.035, u * 0.035);
+  }
+  // butter glaze (Customize "butter amount"): a golden sheen over the whole kernel
+  if (butter > 0) {
+    g.fillStyle = `rgba(255, 200, 40, ${butter >= 2 ? 0.42 : 0.2})`;
+    for (const L of lobes) {
+      path(L, 0.9);
+      g.fill();
+    }
   }
   // glossy streaks — the "glisten" (strongest on caramel)
   if (vivid) {

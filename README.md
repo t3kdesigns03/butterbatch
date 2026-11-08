@@ -10,6 +10,7 @@ npm run dev        # http://localhost:3000
 npm run build      # production build
 npm run start      # serve the production build
 npm run lint
+npm run check:pricing   # cart/custom/bundle price math vs data/menu.ts
 ```
 
 Node 20.9+ (Netlify uses Node 22, see `netlify.toml` / `.nvmrc`).
@@ -20,6 +21,10 @@ Node 20.9+ (Netlify uses Node 22, see `netlify.toml` / `.nvmrc`).
 | --- | --- |
 | Menu (flavors, sizes, prices, availability) | `data/menu.ts` — the only source. Components call `getMenu()`. |
 | Contact links, pickup locations | `data/site.ts` |
+| Shop / Customize / Tour pages | `app/shop`, `app/customize`, `app/tour` (+ `components/shop`, `components/customize`, `components/tour`) |
+| Shared cart (localStorage, specs only — never prices) | `lib/cartStore.ts`, `components/cart/` |
+| Cart pricing + Messenger order text (pure, from the menu) | `lib/pricing.ts` |
+| Tour stops (real photos + captions) | `data/tour.ts` |
 | Living logo hero | `components/hero/` — `HeroStage.tsx` (layers, hint), `PopcornIntro.tsx` (full-screen opening burst), `popcornEngine.ts` (tap/entrance bursts), `sprites.ts` (drawn popcorn) |
 | Page sections | `components/*.tsx`, composed in `app/page.tsx` |
 | Security headers / CSP | `next.config.ts` |
@@ -46,5 +51,5 @@ All photos are the business's own (`public/photos/`). Never add stock food photo
 
 ## Not built yet
 
-- Phase 2: cart, checkout, payments (ordering is Facebook Messenger for now).
+- Payments / checkout page (the cart composes a Messenger order; no payment is taken).
 - Phase 3: admin panel (will replace the body of `getMenu()`).

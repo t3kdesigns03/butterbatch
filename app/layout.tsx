@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter, Yellowtail } from "next/font/google";
+import { CartProvider } from "@/components/cart/CartProvider";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import { getMenu } from "@/data/menu";
 import { FACEBOOK_URL, site, siteUrl } from "@/data/site";
 import "./globals.css";
 
@@ -73,7 +77,8 @@ function jsonLd() {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const menu = await getMenu();
   return (
     <html lang="en" className={`${bricolage.variable} ${inter.variable} ${yellowtail.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
@@ -83,7 +88,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        {children}
+        {/* One shared cart for Home, Shop, Customize and Tour (saved in this browser only). */}
+        <CartProvider menu={menu}>
+          <Header />
+          {children}
+          <Footer />
+        </CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd() }} />
       </body>
     </html>

@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { FACEBOOK_URL, site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -15,7 +13,6 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <Header />
       <main id="main" className="flex-1 bg-cream py-14">
         <article className="mx-auto max-w-2xl px-4 text-lg leading-relaxed">
           <h1 className="font-display text-4xl font-bold tracking-tight text-navy">Privacy</h1>
@@ -23,8 +20,20 @@ export default function PrivacyPage() {
 
           <h2 className="mt-8 font-display text-2xl font-bold tracking-tight text-navy">The short version</h2>
           <p className="mt-2">
-            This website doesn&rsquo;t ask for your information. There are no forms, no accounts, no cookies, and no
-            analytics or advertising trackers on this site.
+            This website doesn&rsquo;t ask for your information. There are no forms, no accounts, no cookies, no
+            payments, and no analytics or advertising trackers on this site.
+          </p>
+
+          <h2 className="mt-8 font-display text-2xl font-bold tracking-tight text-navy">Your cart</h2>
+          <p className="mt-2">
+            When you add popcorn to your cart, the items (flavors, sizes and choices — nothing about you) are saved in
+            your own browser&rsquo;s local storage so they&rsquo;re still there when you come back. They are never sent
+            to us or anyone else by this website. You can clear them anytime with &ldquo;Empty cart&rdquo; or by
+            clearing your browser&rsquo;s site data.
+          </p>
+          <p className="mt-2">
+            When you tap &ldquo;Copy order &amp; message us&rdquo;, your order text is copied to your device&rsquo;s
+            clipboard so you can paste it into Messenger. Nothing is sent until you choose to send it there.
           </p>
 
           <h2 className="mt-8 font-display text-2xl font-bold tracking-tight text-navy">Ordering</h2>
@@ -53,7 +62,6 @@ export default function PrivacyPage() {
           </p>
         </article>
       </main>
-      <Footer />
     </>
   );
 }

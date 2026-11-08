@@ -17,11 +17,22 @@ export type SizePrice = {
   price: number;
 };
 
+/**
+ * Illustrative colour family used for bag renders and the Customize bucket. NOT a photo and not a
+ * product claim — just the closest look from the real bags (e.g. Caramel Apple bags are green).
+ */
+export type Look = "butter" | "kettle" | "caramel" | "cheddar" | "apple";
+
+export type Photo = { src: string; alt: string };
+
 export type Flavor = {
   id: string;
   name: string;
   /** false = temporarily out. Shown as "Out right now" instead of being hidden. */
   available: boolean;
+  look: Look;
+  /** A real photo of this flavor, when the business has one. Never stock or AI imagery. */
+  photo?: Photo;
 };
 
 export type MenuCategory = {
@@ -37,6 +48,9 @@ export type Bundle = {
   name: string;
   description: string;
   price: number;
+  /** What the bundle contains: N bags of one size, customer picks each bag's flavor. */
+  bags: number;
+  size: SizeId;
   /** Only rendered on the site when true. */
   showOnSite: boolean;
   /** Where this item came from, for whoever maintains the menu. */
@@ -55,6 +69,25 @@ export type RotatingItem = {
   note?: string;
 };
 
+export type ButterLevel = { id: "light" | "regular" | "extra"; label: string };
+
+/**
+ * Rules for "Build My Popcorn". Nothing here may invent a price: butter level and flavor mixes
+ * have NO upcharge on the menu board, so they are free.
+ */
+export type CustomizeOptions = {
+  maxFlavors: number;
+  /**
+   * How a 2-flavor mix is priced when the flavors are in different price tiers.
+   * "highest" = the higher of the two menu-board prices (e.g. Butter + Dill Pickle = Specialty
+   * price). OWNER TO CONFIRM — the menu board does not say.
+   */
+  mixPricing: "highest";
+  butterLevels: ButterLevel[];
+  /** Toppings the menu actually offers. The current board lists none, so this is empty. */
+  toppings: { id: string; name: string; price: number }[];
+};
+
 export type Menu = {
   /** ISO date of the menu board this data was transcribed from. */
   effectiveDate: string;
@@ -63,10 +96,11 @@ export type Menu = {
   priceNote: string;
   categories: MenuCategory[];
   bundles: Bundle[];
+  customize: CustomizeOptions;
   rotating: RotatingItem[];
 };
 
-const flavor = (name: string, available = true): Flavor => ({
+const flavor = (name: string, look: Look, extra: { available?: boolean; photo?: Photo } = {}): Flavor => ({
   id: name
     .toLowerCase()
     .normalize("NFD")
@@ -74,7 +108,9 @@ const flavor = (name: string, available = true): Flavor => ({
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, ""),
   name,
-  available,
+  available: extra.available ?? true,
+  look,
+  ...(extra.photo ? { photo: extra.photo } : {}),
 });
 
 /*
@@ -96,7 +132,7 @@ const MENU: Menu = {
         { size: "medium", label: "Medium bag", price: 9 },
         { size: "large", label: "Large bag", price: 12 },
       ],
-      flavors: [flavor("Butter"), flavor("Cheddar"), flavor("Kettle")],
+      flavors: [flavor("Butter", "butter"), flavor("Cheddar", "cheddar"), flavor("Kettle", "kettle")],
     },
     {
       id: "specialty",
@@ -107,16 +143,21 @@ const MENU: Menu = {
         { size: "large", label: "Large bag", price: 14 },
       ],
       flavors: [
-        flavor("Parmesan Garlic"),
-        flavor("Dill Pickle"),
-        flavor("Hot Honey BBQ"),
-        flavor("Spicy Dill"),
-        flavor("Caramel Apple"),
-        flavor("Maple Bourbon Habanero"),
-        flavor("Jalapeño Cheddar"),
-        flavor("Salted Caramel"),
-        flavor("Loaded Baked Potato"),
-        flavor("Cheddar Caramel Craze"),
+        flavor("Parmesan Garlic", "butter"),
+        flavor("Dill Pickle", "butter"),
+        flavor("Hot Honey BBQ", "caramel"),
+        flavor("Spicy Dill", "butter"),
+        flavor("Caramel Apple", "apple"),
+        flavor("Maple Bourbon Habanero", "caramel"),
+        flavor("Jalapeño Cheddar", "cheddar"),
+        flavor("Salted Caramel", "caramel"),
+        flavor("Loaded Baked Potato", "cheddar"),
+        flavor("Cheddar Caramel Craze", "cheddar", {
+          photo: {
+            src: "/photos/cheddar-caramel-craze.jpg",
+            alt: "A real bag of Butter Batch Cheddar Caramel Craze popcorn with its flavor label and Butter Batch sticker.",
+          },
+        }),
       ],
     },
   ],
@@ -126,11 +167,23 @@ const MENU: Menu = {
       name: "Event Bundle",
       description: "2 large bags, any flavor",
       price: 20,
+      bags: 2,
+      size: "large",
       // Not on Menu1.jpg — from the business's Sept 2026 Facebook menu post. Owner to confirm.
       showOnSite: true,
       source: "Facebook menu post, Sept 2, 2026 (not on Menu1.jpg)",
     },
   ],
+  customize: {
+    maxFlavors: 2,
+    mixPricing: "highest",
+    butterLevels: [
+      { id: "light", label: "Light" },
+      { id: "regular", label: "Regular" },
+      { id: "extra", label: "Extra Butter" },
+    ],
+    toppings: [],
+  },
   rotating: [
     { id: "cheddar-pretzel-ale", name: "Cheddar Pretzel Ale", status: "unconfirmed" },
     { id: "cinnadust-kettle", name: "Cinnadust Kettle", status: "unconfirmed" },
