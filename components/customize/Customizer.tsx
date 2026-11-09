@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { ButterLevel, SizeId } from "@/data/menu";
 import { customUnitPrice, findFlavor, money, sizePrice, type CustomItem } from "@/lib/pricing";
 import { useCart } from "../cart/CartProvider";
+import { HashLink } from "../HashLink";
 import { FlavorPhoto, pillClass } from "../order/ui";
 import { Bucket } from "./Bucket";
 
@@ -60,7 +60,7 @@ function Builder({ editing }: { editing: CustomItem | null }) {
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
       {/* live preview: bucket (real logo label) + real photo of the chosen flavor(s) */}
-      <div className="lg:sticky lg:top-24" data-pop data-pop-look={looks[0] ?? "butter"}>
+      <div className="-mt-5 lg:sticky lg:top-24 lg:mt-0" data-pop data-pop-look={looks[0] ?? "butter"}>
         <Bucket looks={looks} size={size} butter={butterIdx} />
         <p className="mt-4 text-center text-sm text-white/85" aria-live="polite">
           {picked.length === 0
@@ -181,9 +181,9 @@ function Builder({ editing }: { editing: CustomItem | null }) {
           </button>
           {added && (
             <p className="mt-3 text-center">
-              <Link href="/#order" className="inline-flex min-h-11 items-center font-bold text-butter">
+              <HashLink href="/#order" className="inline-flex min-h-11 items-center font-bold text-butter">
                 View your order →
-              </Link>
+              </HashLink>
             </p>
           )}
         </div>

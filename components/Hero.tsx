@@ -10,7 +10,22 @@ export async function Hero() {
 
   return (
     <section id="top" aria-labelledby="hero-heading" className="relative overflow-hidden text-white">
-      <HeroStage>
+      <HeroStage
+        below={
+          <figure>
+            <div className="relative aspect-[1840/655] md:aspect-[1840/520] overflow-hidden rounded-2xl">
+              <Image
+                src="/photos/fresh-batch-bags.jpg"
+                alt="A long table covered in real Butter Batch bags of fresh popcorn — Kettle, Butter, green Caramel Apple and orange Cheddar — each with the Butter Batch label."
+                fill
+                sizes="(min-width: 1152px) 1120px, 100vw"
+                className="object-cover"
+              />
+            </div>
+            <figcaption className="mt-2 text-sm text-white/70">A fresh batch, bagged and labeled. Photo: Butter Batch Popcorn Co.</figcaption>
+          </figure>
+        }
+      >
         <h1 id="hero-heading" className="font-display text-[2.6rem] leading-[1.02] font-bold tracking-tight sm:text-6xl">
           Pop Your Corn, <span className="text-butter">every day.</span>
         </h1>
@@ -39,18 +54,6 @@ export async function Hero() {
             Build My Popcorn
           </Link>
         </div>
-        <figure className="mt-8">
-          <div className="relative aspect-[1840/655] overflow-hidden rounded-2xl">
-            <Image
-              src="/photos/fresh-batch-bags.jpg"
-              alt="A long table covered in real Butter Batch bags of fresh popcorn — Kettle, Butter, green Caramel Apple and orange Cheddar — each with the Butter Batch label."
-              fill
-              sizes="(min-width: 768px) 560px, 100vw"
-              className="object-cover"
-            />
-          </div>
-          <figcaption className="mt-2 text-sm text-white/70">A fresh batch, bagged and labeled. Photo: Butter Batch Popcorn Co.</figcaption>
-        </figure>
       </HeroStage>
     </section>
   );

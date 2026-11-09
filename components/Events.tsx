@@ -32,72 +32,77 @@ export function Events() {
   const [next, ...rest] = upcoming;
 
   return (
-    <section id="events" aria-labelledby="events-heading" className="py-14 sm:py-20">
+    <section id="events" aria-labelledby="events-heading" className="py-4">
       <div className="mx-auto max-w-6xl px-4">
         <h2 id="events-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
           Events &amp; pop-ups
         </h2>
 
-        {next ? (
-          <>
-            <div className="mt-6">
-              <span className="rounded-full bg-butter px-3 py-1 text-xs font-extrabold tracking-wider text-royal uppercase">Next stop</span>
-              <p className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">{next.title}</p>
-              <p className="mt-2 text-xl text-white/90">
-                <time dateTime={next.start}>
-                  {dayFmt.format(new Date(next.start))} · {timeFmt.format(new Date(next.start))}
-                </time>
-              </p>
-              <p className="text-lg text-white/85">
-                {next.venue}, {next.city}
-              </p>
+        {/* two columns on desktop: the next stop | plan an event — no empty half */}
+        <div className="grid gap-8 md:grid-cols-2 md:gap-12">
+          <div>
+            {next ? (
+              <>
+                <div className="mt-6">
+                  <span className="rounded-full bg-butter px-3 py-1 text-xs font-extrabold tracking-wider text-royal uppercase">Next stop</span>
+                  <p className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">{next.title}</p>
+                  <p className="mt-2 text-xl text-white/90">
+                    <time dateTime={next.start}>
+                      {dayFmt.format(new Date(next.start))} · {timeFmt.format(new Date(next.start))}
+                    </time>
+                  </p>
+                  <p className="text-lg text-white/85">
+                    {next.venue}, {next.city}
+                  </p>
+                  <a
+                    href={next.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 font-bold text-royal hover:bg-butter-light"
+                  >
+                    Event details on Facebook <ExternalIcon />
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                </div>
+                {rest.length > 0 && (
+                  <ul className="mt-6 space-y-4" aria-label="More upcoming events">
+                    {rest.map((e) => (
+                      <li key={e.id} className="flex flex-wrap items-baseline gap-x-4">
+                        <time dateTime={e.start} className="w-24 font-display text-xl font-bold text-butter">
+                          {shortFmt.format(new Date(e.start))}
+                        </time>
+                        <a href={e.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-white">
+                          {e.title}
+                        </a>
+                        <span className="text-white/80">
+                          {timeFmt.format(new Date(e.start))} · {e.venue}, {e.city}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            ) : (
+              <p className="mt-4 max-w-xl text-lg text-white/85">Pop-ups are announced on Facebook first — follow along there.</p>
+            )}
+          </div>
+
+          <div className="md:mt-6">
+            <p className="max-w-xl text-lg text-white/85">
+              Party, fundraiser, office treat or game night? Tell us the date, how many people and your favorite flavors.
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <OrderButton label="Plan an event" />
               <a
-                href={next.sourceUrl}
+                href={FACEBOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 font-bold text-royal hover:bg-butter-light"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 font-bold text-royal hover:bg-butter-light"
               >
-                Event details on Facebook <ExternalIcon />
+                Follow on Facebook <ExternalIcon />
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
             </div>
-            {rest.length > 0 && (
-              <ul className="mt-10 space-y-4" aria-label="More upcoming events">
-                {rest.map((e) => (
-                  <li key={e.id} className="flex flex-wrap items-baseline gap-x-4">
-                    <time dateTime={e.start} className="w-24 font-display text-xl font-bold text-butter">
-                      {shortFmt.format(new Date(e.start))}
-                    </time>
-                    <a href={e.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-white">
-                      {e.title}
-                    </a>
-                    <span className="text-white/80">
-                      {timeFmt.format(new Date(e.start))} · {e.venue}, {e.city}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </>
-        ) : (
-          <p className="mt-4 max-w-xl text-lg text-white/85">Pop-ups are announced on Facebook first — follow along there.</p>
-        )}
-
-        <div className="mt-10">
-          <p className="max-w-xl text-lg text-white/85">
-            Party, fundraiser, office treat or game night? Tell us the date, how many people and your favorite flavors.
-          </p>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <OrderButton label="Plan an event" />
-            <a
-              href={FACEBOOK_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 font-bold text-royal hover:bg-butter-light"
-            >
-              Follow on Facebook <ExternalIcon />
-              <span className="sr-only">(opens in a new tab)</span>
-            </a>
           </div>
         </div>
       </div>

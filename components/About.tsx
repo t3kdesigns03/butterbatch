@@ -8,8 +8,8 @@ const POINTS = [
 
 export function About() {
   return (
-    <section id="about" aria-labelledby="about-heading" className="py-14 sm:py-20">
-      <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 md:grid-cols-[3fr_2fr]">
+    <section id="about" aria-labelledby="about-heading" className="py-4">
+      <div className="mx-auto grid max-w-5xl items-center gap-8 px-4 md:grid-cols-[3fr_2fr]">
         <div>
           <h2 id="about-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
             Small batch. Real butter. Right here in Lincoln.

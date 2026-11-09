@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ShopPage() {
   return (
     <main id="main" className="flex-1">
-      <div className="mx-auto max-w-6xl px-4 pt-10 sm:pt-14">
+      <div className="mx-auto max-w-6xl px-4 pt-4">
         <h1 className="font-display text-5xl font-bold tracking-tight text-white sm:text-6xl">Shop</h1>
       </div>
       <Specials />

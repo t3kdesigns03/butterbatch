@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { burst } from "@/lib/popBus";
 import type { PopcornEngine } from "./popcornEngine";
-import { PopcornIntro } from "./PopcornIntro";
 
 const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
 function subscribeReduced(cb: () => void) {
@@ -16,13 +15,15 @@ const getReducedServer = () => false;
 
 /**
  * Two-column hero stage. Layers, back to front:
- *   1. back canvas — the one entrance burst (kernels emerge from behind the logo) + a few faint drifters.
+ *   1. back canvas — the one entrance burst (kernels emerge from behind the logo), then it goes quiet.
  *   2. the ORIGINAL logo artwork as a plain <img>: no transform, scale, rotation, filter, mask or
  *      animation, ever. (`butter-batch-logo-840.webp` is a resized copy of `butter-batch-logo.png`
  *      whose blue background decodes to exactly #013893, so there is no seam on the page.)
  *   3. Logo taps → 14 kernels rise from the popcorn pile at the bottom of the logo (page-wide PopLayer).
+ * Layout: copy | logo side by side (stacked on phones), then `below` spans the full width so the
+ * hero fills the screen instead of leaving an empty column.
  */
-export function HeroStage({ children }: { children: ReactNode }) {
+export function HeroStage({ children, below }: { children: ReactNode; below?: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLCanvasElement>(null);
   const logoRef = useRef<HTMLButtonElement>(null);
@@ -52,11 +53,9 @@ export function HeroStage({ children }: { children: ReactNode }) {
 
   return (
     <div ref={rootRef} className="relative isolate">
-      <PopcornIntro />
       <canvas ref={backRef} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 pt-8 pb-12 md:grid-cols-[1.05fr_1fr] md:gap-12 md:pt-14 md:pb-16">
-        {/* data-clear: ambient kernels stay out of the copy column */}
-        <div data-clear className="order-2 md:order-1">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pt-4 pb-4 md:grid-cols-[1.05fr_1fr] md:gap-x-12 md:gap-y-6 md:pt-6">
+        <div className="order-2 md:order-1">
           {children}
         </div>
         <div className="order-1 flex flex-col items-center md:order-2">
@@ -88,6 +87,7 @@ export function HeroStage({ children }: { children: ReactNode }) {
             Tap the logo — it pops!
           </p>
         </div>
+        {below && <div className="order-3 md:col-span-2">{below}</div>}
       </div>
     </div>
   );

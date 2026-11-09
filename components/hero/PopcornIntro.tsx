@@ -6,8 +6,9 @@ import { drawSeed, FLAVORS, makePuffSprite, popScale } from "./sprites";
 /**
  * Full-screen popcorn moment when the site opens: kernels pop up from the lower part of the
  * screen in a rising crescendo, fill the view, then fall away and the canvas removes itself
- * (~3s). Click-through (pointer-events: none), aria-hidden, skipped for reduced motion or if the
- * page opens scrolled away from the hero. Plays once per full page load.
+ * (~3.4s hard stop). Click-through (pointer-events: none), aria-hidden, skipped for reduced motion.
+ * Mounted once at the page root (app/layout.tsx) so no section can paint over it. Plays once per
+ * full page load — first open AND reload — when that load lands on the home page.
  *
  * Drawn popcorn only — the logo underneath is never touched.
  */
@@ -30,7 +31,7 @@ type Pop = {
 type Fleck = { x: number; y: number; vx: number; vy: number; age: number; life: number; size: number };
 
 const GRAVITY = 1500;
-const MAX_TIME = 3.6; // hard stop, seconds
+const MAX_TIME = 3.4; // hard stop, seconds — every kernel is gone by then
 
 function rand(a: number, b: number) {
   return a + Math.random() * (b - a);
@@ -49,11 +50,7 @@ export function PopcornIntro() {
       canvas.style.display = "none";
       canvas.width = canvas.height = 0;
     };
-    if (
-      playedThisLoad ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      window.scrollY > window.innerHeight * 0.5
-    ) {
+    if (playedThisLoad || window.location.pathname !== "/" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       finish();
       return;
     }
@@ -102,11 +99,13 @@ export function PopcornIntro() {
 
     let raf = 0;
     let last = performance.now();
+    let start = 0; // set on the first frame; the hard stop is wall-clock, even if frames stall
     let time = 0;
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      time += dt;
+      if (!start) start = now;
+      time = (now - start) / 1000;
       g.clearRect(0, 0, W, H);
       let alive = 0;
       for (const p of pops) {
@@ -174,7 +173,7 @@ export function PopcornIntro() {
     <canvas
       ref={ref}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[60] h-full w-full"
+      className="pointer-events-none fixed inset-0 z-[60] h-dvh w-screen"
     />
   );
 }

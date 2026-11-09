@@ -59,7 +59,7 @@ export function Bucket({ looks, size, butter }: Props) {
       const rimHalf = W * 0.42;
       // a 2nd flavor grows the pile; size scales it
       const grow = 1 + 0.3 * (Math.max(1, looks.length) - 1);
-      const moundH = H * (size === "large" ? 0.3 : 0.16) * (1 + 0.12 * (grow - 1) / 0.3);
+      const moundH = H * (size === "large" ? 0.3 : 0.26) * (1 + 0.12 * (grow - 1) / 0.3);
       const count = Math.round((size === "large" ? 95 : 62) * grow);
       const r = rand(size === "large" ? 7 : 3);
       const kSize = W * 0.15;

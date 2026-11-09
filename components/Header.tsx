@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useCart } from "./cart/CartProvider";
+import { HashLink } from "./HashLink";
 
-const NAV = [
+const NAV: { href: string; label: string }[] = [
   { href: "/#menu", label: "Menu" },
   { href: "/customize", label: "Customize" },
   { href: "/tour", label: "Tour" },
@@ -12,6 +13,11 @@ const NAV = [
   { href: "/#pickup", label: "Pickup" },
   { href: "/#about", label: "About" },
 ];
+
+/** Hash targets ("/#menu") go through HashLink so the URL never stacks two hashes. */
+function NavLink({ href, ...rest }: { href: string; className: string; onClick?: () => void; children: ReactNode }) {
+  return href.startsWith("/#") ? <HashLink href={href as `/#${string}`} {...rest} /> : <Link href={href} {...rest} />;
+}
 
 /** Same #013893 as every section, no lines. Wordmark + Cart (count) + hamburger on phones. */
 export function Header() {
@@ -49,16 +55,16 @@ export function Header() {
           <ul className="flex items-center gap-1">
             {NAV.map((n) => (
               <li key={n.href}>
-                <Link href={n.href} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-white hover:text-butter">
+                <NavLink href={n.href} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-white hover:text-butter">
                   {n.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
         </nav>
 
         <div className="flex items-center gap-1">
-          <Link
+          <HashLink
             href="/#order"
             onClick={() => setOpen(false)}
             className="inline-flex min-h-11 items-center gap-2 rounded-full bg-butter px-4 text-sm font-bold whitespace-nowrap text-royal hover:bg-butter-light"
@@ -71,7 +77,7 @@ export function Header() {
             Cart
             <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-royal px-1.5 text-xs text-white">{count}</span>
             <span className="sr-only">{count === 1 ? "item" : "items"} — view your order</span>
-          </Link>
+          </HashLink>
           <button
             ref={toggleRef}
             type="button"
@@ -90,16 +96,16 @@ export function Header() {
 
       <div
         id="mobile-nav"
-        className={`grid bg-royal transition-[grid-template-rows] duration-200 motion-reduce:transition-none lg:hidden ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+        className={`absolute inset-x-0 top-full grid bg-royal transition-[grid-template-rows] duration-200 motion-reduce:transition-none lg:hidden ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
         inert={!open}
       >
         <nav aria-label="Mobile" className="overflow-hidden">
           <ul className="px-4 pb-3">
             {NAV.map((n) => (
               <li key={n.href}>
-                <Link href={n.href} onClick={() => setOpen(false)} className="flex min-h-12 items-center text-lg font-semibold text-white">
+                <NavLink href={n.href} onClick={() => setOpen(false)} className="flex min-h-12 items-center text-lg font-semibold text-white">
                   {n.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
