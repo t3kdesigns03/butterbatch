@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { ORDER_URL, pickupLocations } from "@/data/site";
 import { cartTotal, describe, money, orderMessage, unitPrice, MAX_QTY, type OrderPrefs } from "@/lib/pricing";
 import { useCart } from "../cart/CartProvider";
-import { pillClass, SizePills } from "./ui";
+import { CashIcon, ChatIcon, CheckIcon, VenmoIcon } from "../icons";
+import { SizePills } from "./ui";
 
 /**
  * Live "Your Order". No payment is taken on the site: Proceed copies the full order and opens the
@@ -20,13 +21,14 @@ export function OrderSummary() {
   const spot = pickupLocations.find((l) => l.id === prefs.pickupId);
   const amount = `${money(subtotal)} + tax${prefs.fulfillment === "ship" ? " + shipping" : ""}`;
 
-  const methods: { id: OrderPrefs["payment"]; title: string; help: string; disabled?: boolean }[] = [
-    { id: "messenger", title: "Messenger", help: `Send your order now. We'll confirm ${amount} and how you'd like to pay.` },
-    { id: "venmo", title: "Venmo", help: `Venmo ${amount} after we confirm in Messenger. We'll share our Venmo there.` },
+  const methods: { id: OrderPrefs["payment"]; title: string; help: string; icon: ComponentType<{ className?: string }>; disabled?: boolean }[] = [
+    { id: "messenger", title: "Messenger", help: "Send your order now.", icon: ChatIcon },
+    { id: "venmo", title: "Venmo", help: "We'll share our Venmo there.", icon: VenmoIcon },
     {
       id: "cash",
       title: "Cash at pickup",
-      help: prefs.fulfillment === "ship" ? "Not available when shipping." : `Bring ${amount} in cash when you pick up.`,
+      help: prefs.fulfillment === "ship" ? "Not available when shipping." : "Bring cash when you pick up.",
+      icon: CashIcon,
       disabled: prefs.fulfillment === "ship",
     },
   ];
@@ -159,10 +161,13 @@ export function OrderSummary() {
 
               <fieldset className="mt-9">
                 <legend className="font-display text-2xl font-bold tracking-tight text-butter">How will you pay?</legend>
-                <p className="mt-1 text-sm text-white/80">You pay after we confirm. No card details on this site.</p>
-                <div role="radiogroup" aria-label="Payment method" className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                <p className="mt-2 text-sm leading-relaxed text-pretty text-white/80">
+                  You pay after we confirm — {amount}. No card details on this site.
+                </p>
+                <div role="radiogroup" aria-label="Payment method" className="mt-4 grid gap-3">
                   {methods.map((m) => {
                     const on = prefs.payment === m.id;
+                    const Icon = m.icon;
                     return (
                       <button
                         key={m.id}
@@ -171,10 +176,18 @@ export function OrderSummary() {
                         aria-checked={on}
                         disabled={m.disabled}
                         onClick={() => setPrefs({ payment: m.id })}
-                        className={pillClass(on, "min-h-24 flex-col items-start rounded-3xl px-5 py-4 text-left disabled:opacity-50 lg:min-h-0")}
+                        className={`flex min-h-16 w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-colors disabled:opacity-50 ${
+                          on ? "bg-butter-light text-royal" : "bg-white text-royal"
+                        }`}
                       >
-                        <span className="text-lg font-extrabold">{m.title}</span>
-                        <span className="mt-1 text-sm font-medium opacity-90">{m.help}</span>
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center" aria-hidden="true">
+                          <Icon className="h-6 w-6" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className={`block text-base ${on ? "font-extrabold" : "font-bold"}`}>{m.title}</span>
+                          <span className="mt-0.5 block text-sm font-medium opacity-90">{m.help}</span>
+                        </span>
+                        {on && <CheckIcon className="h-6 w-6 shrink-0" />}
                       </button>
                     );
                   })}
@@ -186,9 +199,12 @@ export function OrderSummary() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onProceed}
-                className="mt-9 flex min-h-14 w-full items-center justify-center rounded-full bg-butter px-6 py-3 text-center text-lg leading-tight font-extrabold text-balance text-royal hover:bg-butter-light"
+                className="mt-9 flex min-h-14 w-full items-center justify-center rounded-full bg-butter px-6 py-3 text-center text-lg leading-tight font-black text-balance text-royal hover:bg-butter-light"
               >
-                Proceed — copy order &amp; open Messenger
+                <span>
+                  Proceed — copy order &amp; open Messenger
+                  <span aria-hidden="true">{" "}→</span>
+                </span>
                 <span className="sr-only">(opens Facebook in a new tab)</span>
               </a>
               <p className="mt-2 text-center text-sm text-white/80" aria-live="polite">
@@ -209,8 +225,8 @@ export function OrderSummary() {
                   aria-label="Order message"
                 />
               </details>
-              <button type="button" onClick={clear} className="mt-2 min-h-11 text-sm font-bold text-butter">
-                Empty order
+              <button type="button" onClick={clear} className="mt-2 min-h-11 text-sm font-semibold text-white/60 hover:text-butter">
+                Clear order
               </button>
             </div>
           </div>
