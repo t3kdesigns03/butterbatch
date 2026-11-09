@@ -24,3 +24,32 @@ export function ExternalIcon({ className = "h-4 w-4" }: IconProps) {
     </svg>
   );
 }
+
+/** Venmo "V" mark (stroke glyph, not the trademark logo). */
+export function VenmoIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4.5 12 19.5 20 4.5" />
+    </svg>
+  );
+}
+
+/** Banknote / cash glyph. */
+export function CashIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2.5" y="6" width="19" height="12" rx="2" />
+      <circle cx="12" cy="12" r="2.6" />
+      <path d="M6 9.5h.01M18 14.5h.01" />
+    </svg>
+  );
+}
+
+/** Check mark for the selected payment method. */
+export function CheckIcon({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4.5 12.5 10 18 19.5 6.5" />
+    </svg>
+  );
+}

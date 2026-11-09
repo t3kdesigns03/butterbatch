@@ -19,7 +19,7 @@ function NavLink({ href, ...rest }: { href: string; className: string; onClick?:
   return href.startsWith("/#") ? <HashLink href={href as `/#${string}`} {...rest} /> : <Link href={href} {...rest} />;
 }
 
-/** Same #013893 as every section, no lines. Wordmark + Cart (count) + hamburger on phones. */
+/** Same #013893 as every section, no lines. Logo + Cart (count) + hamburger on phones. */
 export function Header() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -45,10 +45,21 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-royal">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4">
-        <Link href="/" onClick={() => setOpen(false)} className="flex min-h-11 items-center font-display text-xl font-bold tracking-tight whitespace-nowrap text-butter">
-          Butter Batch
-          <span className="sr-only"> Popcorn Co. home</span>
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4">
+        <Link href="/" onClick={() => setOpen(false)} className="flex min-h-11 items-center" aria-label="Butter Batch Popcorn Co. home">
+          {/* The real logo artwork, shown as-is (no transform/animation). Same pre-encoded copy as the hero:
+              its background decodes to exactly #013893, which next/image re-encoding does not guarantee. */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- pre-encoded so the background is exactly #013893 */}
+          <img
+            src="/brand/butter-batch-logo-840.webp"
+            alt=""
+            width={840}
+            height={694}
+            fetchPriority="high"
+            decoding="async"
+            draggable={false}
+            className="block h-12 w-auto select-none"
+          />
         </Link>
 
         <nav aria-label="Main" className="hidden lg:block">
