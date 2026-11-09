@@ -44,23 +44,28 @@ export function OrderSummary() {
   }
 
   return (
-    <section id="order" aria-labelledby="order-heading" className="py-14 sm:py-20">
-      <div className="mx-auto max-w-3xl px-4">
+    <section id="order" aria-labelledby="order-heading" className="py-4">
+      <div className="mx-auto max-w-6xl px-4">
         <h2 id="order-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
           Your Order
         </h2>
 
         {items.length === 0 ? (
           <p className="mt-4 text-lg text-white/85">
-            Nothing yet. <a href="#menu" className="font-bold text-butter">Pick your popcorn</a> or{" "}
+            Nothing yet.{" "}
+            <a href="#menu" className="font-bold text-butter">
+              Pick your popcorn
+            </a>{" "}
+            or{" "}
             <Link href="/customize" className="font-bold text-butter">
               build your own
             </Link>
             .
           </p>
         ) : (
-          <>
-            <ul className="mt-6 space-y-7" aria-label="Items in your order">
+          // desktop: bags on the left, totals + payment + Proceed on the right (no empty sides)
+          <div className="mt-6 grid gap-9 lg:grid-cols-2 lg:items-start lg:gap-12">
+            <ul className="space-y-7" aria-label="Items in your order">
               {items.map((item) => {
                 const d = describe(menu, item);
                 const unit = unitPrice(menu, item) ?? 0;
@@ -104,11 +109,18 @@ export function OrderSummary() {
                         </div>
                       )}
                       {item.kind === "custom" && (
-                        <Link href={`/customize?edit=${encodeURIComponent(item.id)}`} className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-butter">
+                        <Link
+                          href={`/customize?edit=${encodeURIComponent(item.id)}`}
+                          className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-butter"
+                        >
                           Edit<span className="sr-only"> {d.title}</span>
                         </Link>
                       )}
-                      <button type="button" onClick={() => remove(item.id)} className="ml-auto inline-flex min-h-11 items-center px-2 text-sm font-bold text-butter">
+                      <button
+                        type="button"
+                        onClick={() => remove(item.id)}
+                        className="ml-auto inline-flex min-h-11 items-center px-2 text-sm font-bold text-butter"
+                      >
                         Remove<span className="sr-only"> {d.title}</span>
                       </button>
                     </div>
@@ -117,89 +129,91 @@ export function OrderSummary() {
               })}
             </ul>
 
-            <dl className="mt-9 space-y-2 text-lg">
-              <div className="flex justify-between">
-                <dt className="text-white/85">Subtotal</dt>
-                <dd className="font-bold">{money(subtotal)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-white/85">Tax</dt>
-                <dd className="text-white/85">Tax confirmed in Messenger</dd>
-              </div>
-              {prefs.fulfillment === "ship" && (
+            <div>
+              <dl className="space-y-2 text-lg">
                 <div className="flex justify-between">
-                  <dt className="text-white/85">Shipping</dt>
-                  <dd className="text-white/85">Shipping quoted in Messenger</dd>
+                  <dt className="text-white/85">Subtotal</dt>
+                  <dd className="font-bold">{money(subtotal)}</dd>
                 </div>
-              )}
-              <div className="flex items-baseline justify-between pt-2">
-                <dt className="font-display text-2xl font-bold">Estimated total</dt>
-                <dd className="font-display text-3xl font-bold text-butter">{money(subtotal)}</dd>
-              </div>
-            </dl>
-            <p className="mt-1 text-sm text-white/75">
-              {prefs.fulfillment === "pickup"
-                ? `Lincoln pickup${spot ? ` at ${spot.name}` : " — spot confirmed in Messenger"}.`
-                : "Ship It — shipping quoted in Messenger."}{" "}
-              {menu.priceNote} No payment is taken on this site.
-            </p>
+                <div className="flex justify-between">
+                  <dt className="text-white/85">Tax</dt>
+                  <dd className="text-white/85">Tax confirmed in Messenger</dd>
+                </div>
+                {prefs.fulfillment === "ship" && (
+                  <div className="flex justify-between">
+                    <dt className="text-white/85">Shipping</dt>
+                    <dd className="text-white/85">Shipping quoted in Messenger</dd>
+                  </div>
+                )}
+                <div className="flex items-baseline justify-between pt-2">
+                  <dt className="font-display text-2xl font-bold">Estimated total</dt>
+                  <dd className="font-display text-3xl font-bold text-butter">{money(subtotal)}</dd>
+                </div>
+              </dl>
+              <p className="mt-1 text-sm text-white/75">
+                {prefs.fulfillment === "pickup"
+                  ? `Lincoln pickup${spot ? ` at ${spot.name}` : " — spot confirmed in Messenger"}.`
+                  : "Ship It — shipping quoted in Messenger."}{" "}
+                {menu.priceNote} No payment is taken on this site.
+              </p>
 
-            <fieldset className="mt-9">
-              <legend className="font-display text-2xl font-bold tracking-tight text-butter">How will you pay?</legend>
-              <p className="mt-1 text-sm text-white/80">You pay after we confirm. No card details on this site.</p>
-              <div role="radiogroup" aria-label="Payment method" className="mt-4 grid gap-3 sm:grid-cols-3">
-                {methods.map((m) => {
-                  const on = prefs.payment === m.id;
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={on}
-                      disabled={m.disabled}
-                      onClick={() => setPrefs({ payment: m.id })}
-                      className={pillClass(on, "min-h-24 flex-col items-start rounded-3xl px-5 py-4 text-left disabled:opacity-50")}
-                    >
-                      <span className="text-lg font-extrabold">{m.title}</span>
-                      <span className="mt-1 text-sm font-medium opacity-90">{m.help}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </fieldset>
+              <fieldset className="mt-9">
+                <legend className="font-display text-2xl font-bold tracking-tight text-butter">How will you pay?</legend>
+                <p className="mt-1 text-sm text-white/80">You pay after we confirm. No card details on this site.</p>
+                <div role="radiogroup" aria-label="Payment method" className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                  {methods.map((m) => {
+                    const on = prefs.payment === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={on}
+                        disabled={m.disabled}
+                        onClick={() => setPrefs({ payment: m.id })}
+                        className={pillClass(on, "min-h-24 flex-col items-start rounded-3xl px-5 py-4 text-left disabled:opacity-50 lg:min-h-0")}
+                      >
+                        <span className="text-lg font-extrabold">{m.title}</span>
+                        <span className="mt-1 text-sm font-medium opacity-90">{m.help}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
 
-            <a
-              href={ORDER_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={onProceed}
-              className="mt-9 flex min-h-14 w-full items-center justify-center rounded-full bg-butter px-6 py-3 text-center text-lg leading-tight font-extrabold text-balance text-royal hover:bg-butter-light"
-            >
-              Proceed — copy order &amp; open Messenger
-              <span className="sr-only">(opens Facebook in a new tab)</span>
-            </a>
-            <p className="mt-2 text-center text-sm text-white/80" aria-live="polite">
-              {copyState === "copied"
-                ? "Order copied! Tap Message on our Facebook page and paste it in."
-                : copyState === "manual"
-                  ? "Couldn't copy automatically — copy the order text below and paste it in Messenger."
-                  : "We'll copy your order so you can paste it into Messenger."}
-            </p>
-            <details className="mt-2 text-sm" open={copyState === "manual"}>
-              <summary className="cursor-pointer py-2 font-bold text-butter">See order text</summary>
-              <textarea
-                readOnly
-                value={message}
-                onFocus={(e) => e.currentTarget.select()}
-                rows={10}
-                className="mt-1 w-full rounded-2xl bg-white p-3 font-mono text-xs text-royal"
-                aria-label="Order message"
-              />
-            </details>
-            <button type="button" onClick={clear} className="mt-2 min-h-11 text-sm font-bold text-butter">
-              Empty order
-            </button>
-          </>
+              <a
+                href={ORDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onProceed}
+                className="mt-9 flex min-h-14 w-full items-center justify-center rounded-full bg-butter px-6 py-3 text-center text-lg leading-tight font-extrabold text-balance text-royal hover:bg-butter-light"
+              >
+                Proceed — copy order &amp; open Messenger
+                <span className="sr-only">(opens Facebook in a new tab)</span>
+              </a>
+              <p className="mt-2 text-center text-sm text-white/80" aria-live="polite">
+                {copyState === "copied"
+                  ? "Order copied! Tap Message on our Facebook page and paste it in."
+                  : copyState === "manual"
+                    ? "Couldn't copy automatically — copy the order text below and paste it in Messenger."
+                    : "We'll copy your order so you can paste it into Messenger."}
+              </p>
+              <details className="mt-2 text-sm" open={copyState === "manual"}>
+                <summary className="cursor-pointer py-2 font-bold text-butter">See order text</summary>
+                <textarea
+                  readOnly
+                  value={message}
+                  onFocus={(e) => e.currentTarget.select()}
+                  rows={10}
+                  className="mt-1 w-full rounded-2xl bg-white p-3 font-mono text-xs text-royal"
+                  aria-label="Order message"
+                />
+              </details>
+              <button type="button" onClick={clear} className="mt-2 min-h-11 text-sm font-bold text-butter">
+                Empty order
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </section>

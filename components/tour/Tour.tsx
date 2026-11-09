@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FACEBOOK_URL, mapsUrl, pickupLocations } from "@/data/site";
 import { tourStops } from "@/data/tour";
 import { money } from "@/lib/pricing";
@@ -11,7 +11,8 @@ import { ExternalIcon, PinIcon } from "../icons";
 
 /**
  * Photo-led tour. Native horizontal scroll-snap = swipe on phones with no library;
- * prev/next buttons, dots and ←/→ keys on desktop.
+ * prev/next buttons, dots and ←/→ keys on desktop. The track takes the height of the CURRENT
+ * stop (not the tallest one), so there's never an empty band under a short caption.
  */
 export function Tour() {
   const { menu } = useCart();
@@ -28,6 +29,20 @@ export function Tour() {
     track.scrollTo({ left: next * track.clientWidth, behavior: reduced ? "auto" : "smooth" });
   }
 
+  // fit the track to the visible stop
+  useEffect(() => {
+    const track = trackRef.current;
+    const slide = track?.children[index] as HTMLElement | undefined;
+    if (!track || !slide) return;
+    const fit = () => {
+      track.style.height = `${slide.offsetHeight}px`;
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(slide);
+    return () => ro.disconnect();
+  }, [index]);
+
   function onScroll() {
     const track = trackRef.current;
     if (!track) return;
@@ -35,7 +50,7 @@ export function Tour() {
   }
 
   return (
-    <section aria-roledescription="carousel" aria-label="Butter Batch tour" className="mx-auto max-w-5xl">
+    <section aria-roledescription="carousel" aria-label="Butter Batch tour" className="w-full">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-medium text-white/70" aria-live="polite">
           Stop {index + 1} of {tourStops.length}: <span className="text-white">{tourStops[index]?.title}</span>
@@ -82,7 +97,7 @@ export function Tour() {
           }
         }}
         aria-label="Tour stops — swipe, or use the arrow keys"
-        className="relative mt-4 flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-3xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="relative mt-4 flex items-start snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-3xl transition-[height] duration-200 motion-reduce:transition-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {tourStops.map((stop, i) => (
           <article
@@ -91,14 +106,14 @@ export function Tour() {
             aria-label={`${i + 1} of ${tourStops.length}: ${stop.title}`}
             className="relative w-full shrink-0 snap-start snap-always"
           >
-            <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] md:items-center">
-              <figure className="relative flex h-[52vh] max-h-[520px] min-h-[280px] items-center justify-center overflow-hidden rounded-3xl">
+            <div className="grid gap-6 md:grid-cols-[1.6fr_1fr] md:items-center">
+              <figure className="relative aspect-[4/3] overflow-hidden rounded-3xl md:aspect-auto md:h-[min(52vh,460px)] md:min-h-[300px]">
                 <Image
                   src={stop.photo.src}
                   alt={stop.photo.alt}
                   fill
-                  sizes="(min-width: 768px) 560px, 100vw"
-                  className="object-contain"
+                  sizes="(min-width: 1152px) 690px, (min-width: 768px) 60vw, 100vw"
+                  className="object-cover"
                   loading={i === 0 ? "eager" : "lazy"}
                 />
                 <figcaption className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white">

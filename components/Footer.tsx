@@ -12,7 +12,7 @@ export async function Footer() {
   const year = await copyrightYear();
   return (
     <footer className="bg-royal text-white">
-      <div className="mx-auto max-w-5xl px-4 py-14 text-center">
+      <div className="mx-auto max-w-5xl px-4 pt-4 pb-6 text-center">
         <p className="font-display text-3xl font-bold tracking-tight text-butter sm:text-4xl">Message us to order</p>
         <p className="mx-auto mt-2 max-w-md text-lg text-white/75">
           Send us your flavors and sizes on Facebook Messenger and we&rsquo;ll confirm pickup.
@@ -21,7 +21,7 @@ export async function Footer() {
           <OrderButton />
         </div>
 
-        <div className="mt-12 grid gap-6 text-left sm:grid-cols-3">
+        <div className="mt-8 grid gap-6 text-left sm:grid-cols-3">
           <div>
             <p className="text-sm font-semibold tracking-wide text-butter uppercase">{site.name}</p>
             <p className="mt-1 text-white/75">Lincoln, Nebraska</p>
@@ -49,7 +49,7 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 text-sm text-white/75 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-2 text-sm text-white/75 sm:flex-row">
           {/* site.name already ends in "Co." — no extra period. */}
           <p>
             &copy; {year} {site.name} Prices may change.

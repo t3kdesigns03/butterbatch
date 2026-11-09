@@ -55,7 +55,7 @@ export function FlavorMenu() {
   const shown = menu.categories.filter((c) => filter === "all" || c.id === filter);
 
   return (
-    <section id="menu" aria-labelledby="menu-heading" className="py-14 sm:py-20">
+    <section id="menu" aria-labelledby="menu-heading" className="py-4">
       <div className="mx-auto max-w-6xl px-4">
         <h2 id="menu-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
           Pick your popcorn
@@ -158,7 +158,7 @@ export function FlavorMenu() {
           {shown.flatMap((c) => c.flavors.map((f) => <FlavorCard key={f.id} flavor={f} category={c} />))}
         </ul>
 
-        <div className="mt-10 max-w-3xl space-y-2 text-sm text-white/80">
+        <div className="mt-8 max-w-3xl space-y-2 text-sm text-white/80">
           <p>{menu.priceNote}</p>
           <p>
             <strong className="text-white">Allergens:</strong> we use real butter, and many flavors contain milk or cheese.

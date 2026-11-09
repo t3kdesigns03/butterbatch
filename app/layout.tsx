@@ -4,6 +4,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { PopLayer } from "@/components/pop/PopLayer";
+import { PopcornIntro } from "@/components/hero/PopcornIntro";
 import { getMenu } from "@/data/menu";
 import { FACEBOOK_URL, site, siteUrl } from "@/data/site";
 import "./globals.css";
@@ -96,6 +97,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Footer />
           {/* page-wide popping: taps on buttons/cards burst kernels UP from the tap point (silent) */}
           <PopLayer />
+          {/* full-screen burst once per page load, home page only, ~3.4s, then it removes itself */}
+          <PopcornIntro />
         </CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd() }} />
       </body>

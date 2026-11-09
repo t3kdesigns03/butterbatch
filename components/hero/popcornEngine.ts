@@ -5,8 +5,9 @@
  * separate, untouched <Image>. This engine draws popcorn shapes (see sprites.ts — drawn
  * gradients, never pieces of the logo) on two canvases:
  *
- *   back  canvas — BEHIND the logo: the entrance burst (kernels emerge from behind the logo)
- *                  and up to 8 slow, faint ambient kernels in the margins.
+ *   back  canvas — BEHIND the logo: the entrance burst (kernels emerge from behind the logo).
+ *                  No ambient kernels: once the burst is over (~2.5s) the loop stops and the
+ *                  canvas is blank, so nothing keeps drifting.
  *   Tap/click bursts are handled page-wide by components/pop/PopLayer.tsx.
  *
  * Each burst kernel shows as a seed for a beat, then pops with an overshoot and a few butter
@@ -35,21 +36,10 @@ type Kernel = {
 
 type Fleck = { layer: Layer; x: number; y: number; vx: number; vy: number; age: number; life: number; size: number };
 
-type Drifter = {
-  x: number;
-  y: number;
-  size: number;
-  phase: number;
-  speed: number;
-  alpha: number;
-  sprite: number;
-};
-
 type Rect = { x: number; y: number; w: number; h: number };
 
 const GRAVITY = 1250; // px/s^2
 const MAX_KERNELS = 80;
-const MAX_DRIFTERS = 8;
 
 function rand(a: number, b: number) {
   return a + Math.random() * (b - a);
@@ -64,15 +54,11 @@ export class PopcornEngine {
   private W = 0;
   private H = 0;
   private logo: Rect = { x: 0, y: 0, w: 0, h: 0 };
-  private clear: Rect[] = [];
   private vivid: HTMLCanvasElement[] = [];
-  private soft: HTMLCanvasElement[] = [];
   private kernels: Kernel[] = [];
   private flecks: Fleck[] = [];
-  private drifters: Drifter[] = [];
   private raf = 0;
   private last = 0;
-  private time = 0;
   private visible = true;
   private pageVisible = true;
   private reduced = false;
@@ -151,43 +137,9 @@ export class PopcornEngine {
     this.bctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     const r = this.logoEl.getBoundingClientRect();
     this.logo = { x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height };
-    this.clear = [this.logo];
-    this.root.querySelectorAll("[data-clear]").forEach((el) => {
-      const q = el.getBoundingClientRect();
-      this.clear.push({ x: q.left - box.left, y: q.top - box.top, w: q.width, h: q.height });
-    });
     const px = Math.round(72 * this.dpr);
     this.vivid = FLAVORS.flatMap((f) => [0, 1].map((v) => makePuffSprite(px, f, v, true)));
-    this.soft = [0, 1, 2, 3].map((v) => makePuffSprite(Math.round(48 * this.dpr), "butter", v, false));
-    this.placeDrifters();
     if (!this.raf) this.draw();
-  }
-
-  /** Up to 8 small kernels in the margins: never over the logo box or the headline/buttons column. */
-  private placeDrifters() {
-    const count = this.W < 640 ? 5 : MAX_DRIFTERS;
-    const pad = 14;
-    this.drifters = [];
-    for (let i = 0; i < count; i++) {
-      for (let t = 0; t < 60; t++) {
-        const size = rand(16, 24);
-        const x = rand(size, this.W - size);
-        const y = rand(size, this.H - size);
-        const m = pad + size;
-        const blocked = this.clear.some((k) => x > k.x - m && x < k.x + k.w + m && y > k.y - m && y < k.y + k.h + m);
-        if (blocked) continue;
-        this.drifters.push({
-          x,
-          y,
-          size,
-          phase: rand(0, Math.PI * 2),
-          speed: rand(0.35, 0.6),
-          alpha: rand(0.85, 1),
-          sprite: i % 4,
-        });
-        break;
-      }
-    }
   }
 
   // ------------------------------------------------------------- particles
@@ -226,7 +178,8 @@ export class PopcornEngine {
   // ----------------------------------------------------------------- loop
 
   private shouldRun() {
-    return !this.reduced && this.visible && this.pageVisible && !this.destroyed;
+    const busy = this.kernels.length > 0 || this.flecks.length > 0;
+    return busy && !this.reduced && this.visible && this.pageVisible && !this.destroyed;
   }
 
   private syncLoop() {
@@ -245,7 +198,6 @@ export class PopcornEngine {
   private tick = (now: number) => {
     const dt = Math.min(0.05, (now - this.last) / 1000);
     this.last = now;
-    this.time += dt;
     this.step(dt);
     this.draw();
     this.raf = this.shouldRun() ? requestAnimationFrame(this.tick) : 0;
@@ -299,18 +251,6 @@ export class PopcornEngine {
     const b = this.bctx;
     b.clearRect(0, 0, this.W, this.H);
     if (this.reduced) return; // static hero: logo + text only
-
-    for (const d of this.drifters) {
-      const ph = this.time * d.speed + d.phase;
-      const y = d.y + Math.sin(ph) * 6;
-      const rot = Math.sin(ph * 0.7) * 0.25;
-      b.globalAlpha = d.alpha;
-      b.save();
-      b.translate(d.x, y);
-      b.rotate(rot);
-      b.drawImage(this.soft[d.sprite], -d.size / 2, -d.size / 2, d.size, d.size);
-      b.restore();
-    }
 
     for (const k of this.kernels) {
       if (k.age < 0) continue;

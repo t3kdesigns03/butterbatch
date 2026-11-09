@@ -4,7 +4,7 @@ import { ExternalIcon, PinIcon } from "./icons";
 
 export function Locations() {
   return (
-    <section id="pickup" aria-labelledby="pickup-heading" className="py-14 text-white sm:py-20">
+    <section id="pickup" aria-labelledby="pickup-heading" className="py-4 text-white">
       <div className="mx-auto max-w-6xl px-4">
         <h2 id="pickup-heading" className="font-display text-4xl font-bold tracking-tight text-butter sm:text-5xl">
           Pickup spots
@@ -12,7 +12,7 @@ export function Locations() {
         <p className="mt-2 max-w-xl text-lg text-white/85">
           Order in Messenger, then pick up in Lincoln. We&rsquo;ll confirm the spot and time when you order.
         </p>
-        <div className="mt-8 grid items-start gap-10 md:grid-cols-2">
+        <div className="mt-6 grid items-start gap-8 md:grid-cols-2">
           <ul className="space-y-8">
             {pickupLocations.map((loc) => (
               <li key={loc.id} className="flex items-start gap-3">
